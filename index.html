@@ -23,7 +23,6 @@
             background-color: #f3f4f6;
         }
         
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -39,7 +38,6 @@
             background: #a8a8a8; 
         }
 
-        /* Sidebar Transition */
         .sidebar {
             transition: all 0.3s ease-in-out;
         }
@@ -53,7 +51,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Loading Overlay */
         #auth-loading {
             position: fixed;
             inset: 0;
@@ -65,14 +62,12 @@
             transition: opacity 0.5s ease;
         }
         
-        /* Navigation Active State */
         .nav-item.active {
             background-color: #e0e7ff;
             color: #4f46e5;
             font-weight: 700;
         }
 
-        /* --- PRINT STYLES (High Precision) --- */
         #printable-report {
             display: none;
         }
@@ -778,7 +773,6 @@
         }
 
 
-        // --- Currency Helper ---
         window.formatMoney = (amountInJOD) => {
             if (isNaN(amountInJOD) || amountInJOD === null) return "0 " + currencyRates[currentCurrency].symbol;
             const config = currencyRates[currentCurrency];
@@ -786,7 +780,6 @@
             return `${converted.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})} ${config.symbol}`;
         };
 
-        // --- Settings Logic (Now with Persistence) ---
         document.getElementById('settingsForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             if(!currentUser) return;
@@ -794,7 +787,6 @@
             const newStoreName = document.getElementById('storeNameInput').value;
             const selectedCurrency = document.getElementById('currencySelect').value;
             
-            // Save to Firestore
             try {
                 await setDoc(doc(db, `users/${currentUser.uid}/settings/general`), {
                     storeName: newStoreName,
@@ -809,7 +801,7 @@
             }
         });
 
-        // --- Report Logic ---
+        
         window.toggleReportInputs = () => {
             const type = document.querySelector('input[name="reportType"]:checked').value;
             document.getElementById('dayInputGroup').classList.add('hidden');
@@ -820,7 +812,7 @@
         };
 
         window.generatePDF = () => {
-            // -- Filter Data --
+            
             const type = document.querySelector('input[name="reportType"]:checked').value;
             let filteredOrders = orders; 
             let reportTitle = "تقرير شامل";
@@ -840,23 +832,23 @@
                 reportTitle = `تقرير الفترة من ${from} إلى ${to}`;
             }
 
-            // -- Calculations --
+           
             const totalSales = filteredOrders.reduce((sum, o) => sum + parseFloat(o.amount || 0), 0);
             const totalProfits = filteredOrders.reduce((sum, o) => sum + parseFloat(o.profit || 0), 0);
             const totalOrdersCount = filteredOrders.length;
             const completedOrders = filteredOrders.filter(o => o.status === 'completed').length;
 
-            // -- Build High Precision Print Template --
+            
             const printArea = document.getElementById('printable-report');
             
             const rowsHtml = filteredOrders.map((o, index) => {
                 const statusLabel = o.status === 'completed' ? 'مكتمل' : (o.status === 'pending' ? 'قيد الانتظار' : 'ملغي');
-                // Ensure description is shown
+
                 const desc = o.snapshotDescription || 'لا يوجد وصف';
                 const notes = o.description ? `<br><span class="text-xs text-gray-400">ملاحظة: ${o.description}</span>` : '';
                 const qty = o.quantity || 1;
 
-                // High Precision Row Layout
+
                 return `
                 <tr class="border-b border-gray-200" style="break-inside: avoid;">
                     <td class="py-4 px-2 text-right text-gray-600">${index + 1}</td>
@@ -935,10 +927,10 @@
             `;
 
             printArea.innerHTML = template;
-            setTimeout(() => window.print(), 500); // Small delay to ensure rendering
+            setTimeout(() => window.print(), 500); 
         };
 
-        // --- Auth UI Toggles ---
+
         document.getElementById('toggleAuthMode').addEventListener('click', () => {
             isLoginMode = !isLoginMode;
             document.getElementById('authError').classList.add('hidden');
@@ -946,7 +938,7 @@
                 document.getElementById('authTitle').innerText = "تسجيل الدخول";
                 document.getElementById('submitBtn').innerText = "دخول";
             } else {
-                 // Logic hidden as per user request to keep code clean or if auth mode toggle logic is expanded
+               
             }
         });
 
@@ -1007,13 +999,13 @@
                  select.innerHTML = '<option value="" disabled selected>لا توجد منتجات، أضف منتجاً أولاً</option>';
             } else {
                  let options = '<option value="" disabled selected>اختر منتجاً...</option>';
-                 // Store description and price in data attribute
+                
+                 
                  options += products.map(p => `<option value="${p.name}" data-price="${p.price}" data-desc="${p.description || ''}">${p.name} (المتوفر: ${p.stock})</option>`).join('');
                  select.innerHTML = options;
             }
         }
 
-        // --- CALCULATION LOGIC: Update Amount based on Quantity ---
         function updateOrderCalculations() {
             const select = document.getElementById('productNameSelect');
             const quantityInput = document.getElementById('orderQuantity');
@@ -1027,11 +1019,9 @@
             const desc = selectedOption.getAttribute('data-desc');
             const qty = parseInt(quantityInput.value) || 1;
 
-            // Update Total
             const total = unitPrice * qty;
             document.getElementById('orderAmount').value = total;
 
-            // Update Desc UI
             const descDiv = document.getElementById('selectedProductDesc');
             if (desc) {
                 descDiv.innerText = "تفاصيل المنتج: " + desc;
@@ -1041,7 +1031,6 @@
             }
         }
 
-        // Event Listeners for Calculation
         document.getElementById('productNameSelect').addEventListener('change', updateOrderCalculations);
         document.getElementById('orderQuantity').addEventListener('input', updateOrderCalculations);
 
@@ -1067,7 +1056,6 @@
         function renderOrdersTable() {
             const filteredData = getFilteredOrders();
             const rows = filteredData.map((order, index) => {
-                // Determine description to show: Use snapshot if available (best), or find current product desc (fallback)
                 let descToShow = order.snapshotDescription;
                 if (!descToShow) {
                     const linkedProduct = products.find(p => p.name === order.product);
@@ -1147,7 +1135,6 @@
             const tbody = document.getElementById('productsTableBody');
             if(tbody) tbody.innerHTML = rows || '<tr><td colspan="8" class="text-center py-4 text-gray-400">لا توجد منتجات مطابقة</td></tr>';
             
-            // Update Top Products Widget on Dashboard
             const topContainer = document.getElementById('topProductsContainer');
             if(topContainer) {
                  topContainer.innerHTML = products.slice(0,3).map(p => `
@@ -1223,7 +1210,6 @@
             });
         }
 
-        // --- Global Functions ---
         window.switchView = function(viewName) {
             activeView = viewName; 
             document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
@@ -1238,7 +1224,6 @@
             renderAll(); 
         };
 
-        // --- Product Management ---
         window.openProductModal = (id = null) => {
              document.getElementById('addProductModal').classList.remove('hidden');
              document.getElementById('productModalContent').classList.remove('scale-95');
@@ -1295,7 +1280,6 @@
                     await addDoc(collection(db, `users/${currentUser.uid}/products`), newProd);
                 }
                 
-                // AUTO CLOSE - Closing Modal on Success as requested
                 window.closeProductModal();
                 document.getElementById('productForm').reset();
             } catch (e) {
@@ -1316,7 +1300,6 @@
             }
         };
 
-        // --- Order Management ---
         window.openOrderModal = (id = null) => {
             if (id === null && products.length === 0) {
                 alert("لا يمكن إنشاء طلب جديد لعدم وجود منتجات. الرجاء إضافة منتجات أولاً.");
@@ -1346,7 +1329,6 @@
                     document.getElementById('orderDate').value = order.date;
                     document.getElementById('orderDescription').value = order.description || '';
                     
-                    // Trigger manual change event to show description and update calculations
                     updateOrderCalculations();
                 }
             } else {
@@ -1383,12 +1365,10 @@
                  return alert("عذراً، هذا المنتج نافذ من المخزون.");
             }
 
-            // Calculate Profit & CAPTURE DESCRIPTION SNAPSHOT
             const costPerUnit = selectedProduct.cost || 0;
             const totalCost = costPerUnit * quantity;
             const profit = amount - totalCost;
             
-            // CRITICAL: We save the product description at the time of order
             const snapshotDesc = selectedProduct.description || '';
 
             const orderData = {
@@ -1396,7 +1376,7 @@
                 customerEmail: document.getElementById('customerEmail').value,
                 customerPhone: document.getElementById('customerPhone').value,
                 product: productVal,
-                quantity: quantity, // Save Quantity
+                quantity: quantity, 
                 snapshotDescription: snapshotDesc,
                 amount: amount,
                 profit: profit,
@@ -1413,7 +1393,6 @@
                     orderData.createdAt = serverTimestamp();
                     await addDoc(collection(db, `users/${currentUser.uid}/orders`), orderData);
                     
-                    // --- DEDUCT STOCK (Requirement 1) ---
                     const newStock = selectedProduct.stock - quantity;
                     const productRef = doc(db, `users/${currentUser.uid}/products`, selectedProduct.id);
                     
@@ -1423,7 +1402,6 @@
                     });
                 }
                 
-                // AUTO CLOSE (Requirement 3) - Only after successful await
                 window.closeOrderModal();
                 window.switchView('dashboard');
             } catch (e) {
@@ -1432,7 +1410,6 @@
             }
         });
 
-        // AI Features
         window.generateDashboardInsights = async () => {
              const prompt = `تحليل مبيعات: إجمالي ${document.getElementById('totalSales').innerText}، عدد الطلبات ${orders.length}. أعط نصيحة قصيرة.`;
              await callGeminiUI(prompt, "تحليل المبيعات الذكي");
@@ -1472,7 +1449,6 @@
             document.getElementById('sidebarOverlay').classList.add('hidden');
         });
         
-        // Initial setup
         document.getElementById('reportDay').valueAsDate = new Date();
     </script>
 </body>
