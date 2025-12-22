@@ -232,6 +232,10 @@
                     <i class="fa-solid fa-users"></i>
                     <span>العملاء</span>
                 </a>
+                <a href="#" onclick="switchView('expenses')" id="nav-expenses" class="nav-item flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-indigo-600 rounded-xl transition-colors">
+                    <i class="fa-solid fa-receipt"></i>
+                    <span>المصروفات</span>
+                </a>
                 <a href="#" onclick="switchView('reports')" id="nav-reports" class="nav-item flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-indigo-600 rounded-xl transition-colors">
                     <i class="fa-solid fa-file-invoice-dollar"></i>
                     <span>التقارير المالية</span>
@@ -315,7 +319,7 @@
             <div class="flex-1 overflow-y-auto p-4 lg:p-10 scroll-smooth relative">
                 
                 <div id="view-dashboard" class="view-section fade-in">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6 mb-8">
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
                             <div class="flex justify-between items-start mb-4">
                                 <div><p class="text-sm text-gray-500 font-semibold mb-1">إجمالي المبيعات</p><h3 class="text-2xl font-bold text-gray-800" id="totalSales">$0</h3></div>
@@ -324,8 +328,14 @@
                         </div>
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
                             <div class="flex justify-between items-start mb-4">
-                                <div><p class="text-sm text-gray-500 font-semibold mb-1">الطلبات النشطة</p><h3 class="text-2xl font-bold text-gray-800" id="totalOrders">0</h3></div>
-                                <div class="p-3 bg-blue-50 text-blue-600 rounded-xl"><i class="fa-solid fa-bag-shopping text-xl"></i></div>
+                                <div><p class="text-sm text-gray-500 font-semibold mb-1">أرباح البضاعة</p><h3 class="text-2xl font-bold text-indigo-600" id="grossProfits">$0</h3></div>
+                                <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><i class="fa-solid fa-boxes-stacked text-xl"></i></div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                            <div class="flex justify-between items-start mb-4">
+                                <div><p class="text-sm text-gray-500 font-semibold mb-1">إجمالي المصاريف</p><h3 class="text-2xl font-bold text-red-600" id="totalExpenses">$0</h3></div>
+                                <div class="p-3 bg-red-50 text-red-600 rounded-xl"><i class="fa-solid fa-money-bill-transfer text-xl"></i></div>
                             </div>
                         </div>
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
@@ -334,9 +344,9 @@
                                 <div class="p-3 bg-purple-50 text-purple-600 rounded-xl"><i class="fa-solid fa-user-group text-xl"></i></div>
                             </div>
                         </div>
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition ring-2 ring-orange-100">
                             <div class="flex justify-between items-start mb-4">
-                                <div><p class="text-sm text-gray-500 font-semibold mb-1">الأرباح الصافية</p><h3 class="text-2xl font-bold text-gray-800" id="totalProfits">$0</h3></div>
+                                <div><p class="text-sm text-orange-600 font-bold mb-1">صافي الربح النهائي</p><h3 class="text-2xl font-black text-gray-800" id="totalProfits">$0</h3></div>
                                 <div class="p-3 bg-orange-50 text-orange-600 rounded-xl"><i class="fa-solid fa-wallet text-xl"></i></div>
                             </div>
                         </div>
@@ -364,8 +374,7 @@
                                     <tr>
                                         <th class="px-3 sm:px-6 py-4">رقم الطلب</th>
                                         <th class="px-3 sm:px-6 py-4">العميل</th>
-                                        <th class="px-3 sm:px-6 py-4">رقم الهاتف</th> <!-- NEW COLUMN -->
-                                        <th class="px-3 sm:px-6 py-4 w-1/3">المنتج (الوصف)</th>
+                                        <th class="px-3 sm:px-6 py-4">رقم الهاتف</th> <th class="px-3 sm:px-6 py-4 w-1/3">المنتج (الوصف)</th>
                                         <th class="px-3 sm:px-6 py-4">الكمية</th>
                                         <th class="px-3 sm:px-6 py-4">التاريخ</th>
                                         <th class="px-3 sm:px-6 py-4">المبلغ</th>
@@ -395,8 +404,7 @@
                                          <th class="px-3 sm:px-6 py-4">التصنيف</th>
                                          <th class="px-3 sm:px-6 py-4">سعر البيع</th>
                                          <th class="px-3 sm:px-6 py-4">التكلفة</th>
-                                         <th class="px-3 sm:px-6 py-4">الربح (للقطعة)</th> <!-- NEW COLUMN FOR PROFIT -->
-                                         <th class="px-3 sm:px-6 py-4">المخزون</th>
+                                         <th class="px-3 sm:px-6 py-4">الربح (للقطعة)</th> <th class="px-3 sm:px-6 py-4">المخزون</th>
                                          <th class="px-3 sm:px-6 py-4">الحالة</th>
                                          <th class="px-3 sm:px-6 py-4">إجراء</th>
                                      </tr>
@@ -404,6 +412,29 @@
                                  <tbody id="productsTableBody"></tbody>
                              </table>
                          </div>
+                    </div>
+                </div>
+
+                <div id="view-expenses" class="view-section hidden fade-in">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                            <h3 class="font-bold text-lg text-gray-800">إدارة المصروفات التشغيلية</h3>
+                            <button onclick="openExpenseModal()" class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow hover:bg-red-700">إضافة مصروف +</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-right">
+                                <thead class="bg-gray-50 text-gray-500 font-medium">
+                                    <tr>
+                                        <th class="px-6 py-4">نوع المصروف</th>
+                                        <th class="px-6 py-4">القيمة</th>
+                                        <th class="px-6 py-4">التاريخ</th>
+                                        <th class="px-6 py-4">ملاحظات</th>
+                                        <th class="px-6 py-4">إجراء</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="expensesTableBody" class="divide-y divide-gray-100"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 
@@ -416,8 +447,7 @@
                                         <tr>
                                             <th class="px-3 sm:px-6 py-4">رقم الطلب</th>
                                             <th class="px-3 sm:px-6 py-4">العميل</th>
-                                            <th class="px-3 sm:px-6 py-4">رقم الهاتف</th> <!-- NEW COLUMN -->
-                                            <th class="px-3 sm:px-6 py-4 w-1/3">المنتج & الوصف</th> 
+                                            <th class="px-3 sm:px-6 py-4">رقم الهاتف</th> <th class="px-3 sm:px-6 py-4 w-1/3">المنتج & الوصف</th> 
                                             <th class="px-3 sm:px-6 py-4">الكمية</th>
                                             <th class="px-3 sm:px-6 py-4">التاريخ</th>
                                             <th class="px-3 sm:px-6 py-4">المبلغ</th>
@@ -474,9 +504,9 @@
 
                             <button onclick="generatePDF()" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-file-pdf text-xl"></i>
-                                <span>طباعة تقرير المبيعات (PDF)</span>
+                                <span>طباعة تقرير المبيعات والأرباح (PDF)</span>
                             </button>
-                            <p class="text-center text-xs text-gray-400">سيتم تضمين وصف المنتجات بدقة في التقرير</p>
+                            <p class="text-center text-xs text-gray-400">سيتم تضمين المصاريف وصافي الأرباح بدقة في التقرير</p>
                         </div>
                     </div>
                 </div>
@@ -511,7 +541,6 @@
                                 </button>
                             </div>
                             
-                            <!-- Dangerous Zone for Wiping Data -->
                             <div class="mt-8 pt-6 border-t border-gray-100">
                                 <h4 class="text-red-600 font-bold mb-2">منطقة الخطر</h4>
                                 <p class="text-xs text-gray-500 mb-3">هذا الإجراء سيقوم بحذف جميع المنتجات والطلبات والعملاء نهائياً. لا يمكن التراجع عنه.</p>
@@ -612,12 +641,46 @@
         </div>
     </div>
 
-    <!-- NEW: Customer Details Modal -->
+    <div id="addExpenseModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeExpenseModal()"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl w-full max-w-md p-6 scale-95 transition-transform shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-red-600" id="expenseModalTitle">إضافة مصروف جديد</h3>
+                <button onclick="closeExpenseModal()" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <form id="expenseForm" class="space-y-4">
+                <input type="hidden" id="editingExpenseId">
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">نوع المصروف</label>
+                    <select id="expenseType" required class="w-full px-4 py-2 border rounded-lg bg-white">
+                        <option value="إيجار">إيجار</option>
+                        <option value="رواتب">رواتب</option>
+                        <option value="كهرباء/ماء">كهرباء/ماء</option>
+                        <option value="بضاعة">بضاعة أخرى</option>
+                        <option value="تسويق">تسويق</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+                <div class="flex gap-2">
+                    <div class="w-1/2">
+                        <label class="block text-xs text-gray-500 mb-1">المبلغ</label>
+                        <input type="number" id="expenseAmount" required step="0.01" class="w-full px-4 py-2 border rounded-lg font-bold text-red-600">
+                    </div>
+                    <div class="w-1/2">
+                        <label class="block text-xs text-gray-500 mb-1">التاريخ</label>
+                        <input type="date" id="expenseDate" required class="w-full px-4 py-2 border rounded-lg">
+                    </div>
+                </div>
+                <textarea id="expenseNote" placeholder="ملاحظات حول المصروف..." class="w-full px-4 py-2 border rounded-lg h-20"></textarea>
+                <button type="submit" class="w-full bg-red-600 text-white py-3 rounded-lg font-bold hover:bg-red-700 transition">حفظ المصروف</button>
+            </form>
+        </div>
+    </div>
+
     <div id="customerDetailsModal" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeCustomerModal()"></div>
         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl w-full max-w-2xl p-0 scale-95 transition-transform max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
             
-            <!-- Header -->
             <div class="bg-gradient-to-l from-indigo-600 to-purple-700 p-6 text-white shrink-0 relative overflow-hidden">
                 <button onclick="closeCustomerModal()" class="absolute top-4 left-4 text-white/80 hover:text-white transition bg-white/10 hover:bg-white/20 rounded-full w-8 h-8 flex items-center justify-center">
                     <i class="fa-solid fa-xmark"></i>
@@ -634,14 +697,11 @@
                         </div>
                     </div>
                 </div>
-                <!-- Decorative Circles -->
                 <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
                 <div class="absolute top-0 right-20 w-20 h-20 bg-white/5 rounded-full blur-xl"></div>
             </div>
             
-            <!-- Body -->
             <div class="flex-1 overflow-y-auto p-6 bg-gray-50">
-                <!-- Stats Grid -->
                 <div class="grid grid-cols-3 gap-4 mb-6">
                     <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center">
                         <p class="text-xs text-gray-500 font-bold uppercase mb-1">إجمالي المشتريات</p>
@@ -657,7 +717,6 @@
                     </div>
                 </div>
 
-                <!-- Orders History -->
                 <h4 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
                     <i class="fa-solid fa-clock-rotate-left text-indigo-500"></i> سجل الطلبات
                 </h4>
@@ -672,8 +731,7 @@
                             </tr>
                         </thead>
                         <tbody id="custModalOrdersTable" class="divide-y divide-gray-50">
-                            <!-- Populated via JS -->
-                        </tbody>
+                            </tbody>
                     </table>
                     <div id="custModalNoOrders" class="hidden p-4 text-center text-gray-400 text-sm">لا توجد طلبات لعرضها</div>
                 </div>
@@ -718,6 +776,7 @@
 
         let orders = [];
         let products = [];
+        let expenses = []; // NEW
         let customers = [];
         let chartInstance = null;
         let isLoginMode = true;
@@ -725,6 +784,7 @@
         let currentUser = null;
         let unsubscribeOrders = null;
         let unsubscribeProducts = null;
+        let unsubscribeExpenses = null; // NEW
         let unsubscribeSettings = null;
         let activeView = 'dashboard'; 
 
@@ -764,9 +824,11 @@
         function unsubscribeFromData() {
             if (unsubscribeOrders) unsubscribeOrders();
             if (unsubscribeProducts) unsubscribeProducts();
+            if (unsubscribeExpenses) unsubscribeExpenses(); // NEW
             if (unsubscribeSettings) unsubscribeSettings();
             orders = [];
             products = [];
+            expenses = [];
         }
 
         function subscribeToData(userId) {
@@ -783,6 +845,14 @@
             
             unsubscribeProducts = onSnapshot(productsRef, (snapshot) => {
                 products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderAll();
+            });
+
+            // NEW: Subscribe to Expenses
+            const expensesRef = collection(db, `users/${userId}/expenses`);
+            const qExpenses = query(expensesRef, orderBy('date', 'desc'));
+            unsubscribeExpenses = onSnapshot(qExpenses, (snapshot) => {
+                expenses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderAll();
             });
 
@@ -919,7 +989,6 @@
             }
         });
 
-        // --- NEW FUNCTION: WIPE ALL DATA ---
         window.wipeAllData = async () => {
             if(!currentUser) return;
             
@@ -930,18 +999,20 @@
             if(!confirm2) return;
 
             try {
-                // Delete all orders
                 const ordersQuery = await getDocs(collection(db, `users/${currentUser.uid}/orders`));
                 const ordersPromises = ordersQuery.docs.map(d => deleteDoc(d.ref));
                 
-                // Delete all products
                 const productsQuery = await getDocs(collection(db, `users/${currentUser.uid}/products`));
                 const productsPromises = productsQuery.docs.map(d => deleteDoc(d.ref));
 
-                await Promise.all([...ordersPromises, ...productsPromises]);
+                // Clear expenses too
+                const expensesQuery = await getDocs(collection(db, `users/${currentUser.uid}/expenses`));
+                const expensesPromises = expensesQuery.docs.map(d => deleteDoc(d.ref));
+
+                await Promise.all([...ordersPromises, ...productsPromises, ...expensesPromises]);
                 
                 alert("تم تصفير النظام بنجاح.");
-                window.location.reload(); // Reload to clear any cached states/charts
+                window.location.reload(); 
             } catch (error) {
                 console.error("Error wiping data:", error);
                 alert("حدث خطأ أثناء عملية الحذف. يرجى المحاولة مرة أخرى.");
@@ -962,114 +1033,95 @@
             
             const type = document.querySelector('input[name="reportType"]:checked').value;
             let filteredOrders = orders; 
-            let reportTitle = "تقرير شامل";
-            let reportDate = new Date().toLocaleDateString('ar-EG');
+            let filteredExpenses = expenses;
+            let reportTitle = "تقرير مالي شامل";
             const storeName = document.getElementById('storeNameInput').value || "SalesPro Store";
 
             if (type === 'day') {
                 const day = document.getElementById('reportDay').value;
                 if(!day) return alert('الرجاء اختيار التاريخ');
                 filteredOrders = orders.filter(o => o.date === day);
-                reportTitle = `تقرير مبيعات يوم: ${day}`;
+                filteredExpenses = expenses.filter(e => e.date === day);
+                reportTitle = `تقرير يوم: ${day}`;
             } else if (type === 'range') {
                 const from = document.getElementById('reportFrom').value;
                 const to = document.getElementById('reportTo').value;
                 if(!from || !to) return alert('الرجاء اختيار التواريخ');
                 filteredOrders = orders.filter(o => o.date >= from && o.date <= to);
+                filteredExpenses = expenses.filter(e => e.date >= from && e.date <= to);
                 reportTitle = `تقرير الفترة من ${from} إلى ${to}`;
             }
 
             
             const totalSales = filteredOrders.reduce((sum, o) => sum + parseFloat(o.amount || 0), 0);
-            const totalProfits = filteredOrders.reduce((sum, o) => sum + parseFloat(o.profit || 0), 0);
-            const totalOrdersCount = filteredOrders.length;
-            const completedOrders = filteredOrders.filter(o => o.status === 'completed').length;
+            const grossProfits = filteredOrders.reduce((sum, o) => sum + parseFloat(o.profit || 0), 0);
+            const totalExp = filteredExpenses.reduce((sum, e) => sum + parseFloat(e.amount || 0), 0);
+            const netProfitFinal = grossProfits - totalExp;
 
-            
             const printArea = document.getElementById('printable-report');
             
-            const rowsHtml = filteredOrders.map((o, index) => {
-                const statusLabel = o.status === 'completed' ? 'مكتمل' : (o.status === 'pending' ? 'قيد الانتظار' : 'ملغي');
-
-                const desc = o.snapshotDescription || 'لا يوجد وصف';
-                const notes = o.description ? `<br><span class="text-xs text-gray-400">ملاحظة: ${o.description}</span>` : '';
-                const qty = o.quantity || 1;
-
-
-                return `
-                <tr class="border-b border-gray-200" style="break-inside: avoid;">
-                    <td class="py-4 px-2 text-right text-gray-600">${index + 1}</td>
-                    <td class="py-4 px-2 text-right">
-                        <div class="font-bold text-gray-800">${o.customer}</div>
-                        <div class="text-xs text-gray-500">${o.customerPhone || ''}</div>
-                    </td>
-                    <td class="py-4 px-2 text-right w-1/3">
-                        <div class="font-bold text-gray-800">${o.product}</div>
-                        <div class="text-xs text-gray-600 mt-1 leading-relaxed" style="white-space: pre-wrap;">${desc}</div>
-                        ${notes}
-                    </td>
-                    <td class="py-4 px-2 text-center text-sm">${qty}</td>
-                    <td class="py-4 px-2 text-right text-sm">${o.date}</td>
-                    <td class="py-4 px-2 text-right text-sm font-bold text-indigo-700">${formatMoney(parseFloat(o.amount))}</td>
-                    <td class="py-4 px-2 text-right text-sm">${statusLabel}</td>
+            const orderRows = filteredOrders.map((o, index) => `
+                <tr class="border-b border-gray-200">
+                    <td class="py-2 px-2 text-right">${index + 1}</td>
+                    <td class="py-2 px-2 text-right font-bold">${o.customer}</td>
+                    <td class="py-2 px-2 text-right">${o.product}</td>
+                    <td class="py-2 px-2 text-center">${o.quantity || 1}</td>
+                    <td class="py-2 px-2 text-right">${formatMoney(parseFloat(o.amount))}</td>
+                    <td class="py-2 px-2 text-right text-green-600 font-bold">${formatMoney(parseFloat(o.profit))}</td>
                 </tr>
-                `;
-            }).join('');
+            `).join('');
+
+            const expenseRows = filteredExpenses.map(e => `
+                <tr class="border-b border-red-100 bg-red-50/20">
+                    <td class="py-2 px-2 text-right font-bold text-red-600">${e.type}</td>
+                    <td class="py-2 px-2 text-right italic text-gray-500">${e.note || '-'}</td>
+                    <td class="py-2 px-2 text-right font-bold text-red-700">${formatMoney(parseFloat(e.amount))}</td>
+                </tr>
+            `).join('');
 
             const template = `
-                <div class="max-w-[21cm] mx-auto p-8 bg-white" style="direction: rtl;">
-                    <div class="flex justify-between items-start border-b-2 border-indigo-600 pb-6 mb-8">
-                        <div>
-                            <h1 class="text-4xl font-extrabold text-gray-800 mb-2">${storeName}</h1>
-                            <p class="text-gray-500 font-medium">نظام إدارة المبيعات الذكي</p>
-                            <p class="text-gray-400 text-sm mt-1">تاريخ التقرير: ${new Date().toLocaleString('ar-EG')}</p>
+                <div class="p-10 bg-white" style="direction: rtl;">
+                    <div class="text-center border-b-4 border-indigo-600 pb-4 mb-8">
+                        <h1 class="text-3xl font-black">${storeName}</h1>
+                        <p class="text-gray-500">${reportTitle}</p>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-4 mb-8">
+                        <div class="border p-4 rounded text-center">
+                            <p class="text-xs text-gray-500">إجمالي المبيعات</p>
+                            <h2 class="text-xl font-bold">${formatMoney(totalSales)}</h2>
                         </div>
-                        <div class="text-left bg-gray-50 p-4 rounded-xl border border-gray-100">
-                            <h2 class="text-xl font-bold text-indigo-600 mb-1">${reportTitle}</h2>
-                            <p class="text-gray-600 text-sm">العملة المعتمدة: ${currentCurrency}</p>
+                        <div class="border p-4 rounded text-center">
+                            <p class="text-xs text-gray-500">أرباح البضاعة</p>
+                            <h2 class="text-xl font-bold text-indigo-600">${formatMoney(grossProfits)}</h2>
+                        </div>
+                        <div class="border p-4 rounded text-center bg-red-50">
+                            <p class="text-xs text-red-500">إجمالي المصاريف</p>
+                            <h2 class="text-xl font-bold text-red-600">${formatMoney(totalExp)}</h2>
+                        </div>
+                        <div class="border p-4 rounded text-center bg-orange-50 ring-2 ring-orange-200">
+                            <p class="text-xs text-orange-600 font-bold">صافي الربح النهائي</p>
+                            <h2 class="text-xl font-black">${formatMoney(netProfitFinal)}</h2>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-4 gap-4 mb-10">
-                        <div class="bg-white p-4 rounded-xl border-2 border-indigo-50 text-center shadow-sm">
-                            <p class="text-gray-500 text-xs font-bold mb-1 uppercase tracking-wider">إجمالي المبيعات</p>
-                            <h3 class="text-2xl font-black text-indigo-600">${formatMoney(totalSales)}</h3>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border-2 border-green-50 text-center shadow-sm">
-                            <p class="text-gray-500 text-xs font-bold mb-1 uppercase tracking-wider">صافي الأرباح</p>
-                            <h3 class="text-2xl font-black text-green-600">${formatMoney(totalProfits)}</h3>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border-2 border-gray-100 text-center shadow-sm">
-                            <p class="text-gray-500 text-xs font-bold mb-1 uppercase tracking-wider">عدد الطلبات</p>
-                            <h3 class="text-2xl font-black text-gray-800">${totalOrdersCount}</h3>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border-2 border-gray-100 text-center shadow-sm">
-                            <p class="text-gray-500 text-xs font-bold mb-1 uppercase tracking-wider">المكتملة</p>
-                            <h3 class="text-2xl font-black text-blue-600">${completedOrders}</h3>
-                        </div>
-                    </div>
-
-                    <table class="w-full text-sm border-collapse">
-                        <thead>
-                            <tr class="bg-gray-100 text-gray-700 border-b-2 border-gray-300">
-                                <th class="py-3 px-2 text-right font-bold w-12">#</th>
-                                <th class="py-3 px-2 text-right font-bold w-40">العميل</th>
-                                <th class="py-3 px-2 text-right font-bold">تفاصيل المنتج (الوصف والمواصفات)</th>
-                                <th class="py-3 px-2 text-center font-bold w-16">العدد</th>
-                                <th class="py-3 px-2 text-right font-bold w-24">التاريخ</th>
-                                <th class="py-3 px-2 text-right font-bold w-24">المبلغ</th>
-                                <th class="py-3 px-2 text-right font-bold w-24">الحالة</th>
+                    <h3 class="font-bold border-r-4 border-indigo-600 pr-2 mb-4">سجل الطلبات</h3>
+                    <table class="w-full text-sm mb-8 border">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="p-2 text-right">#</th><th class="p-2 text-right">العميل</th><th class="p-2 text-right">المنتج</th><th class="p-2 text-center">الكمية</th><th class="p-2 text-right">المبلغ</th><th class="p-2 text-right">الربح</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            ${rowsHtml}
-                        </tbody>
+                        <tbody>${orderRows}</tbody>
                     </table>
 
-                    <div class="mt-12 pt-8 border-t border-gray-200 flex justify-between items-center text-gray-400 text-xs">
-                        <p>SalesPro AI - نظام الإدارة المالي</p>
-                        <p>صفحة 1 من 1</p>
-                    </div>
+                    <h3 class="font-bold border-r-4 border-red-600 pr-2 mb-4">سجل المصروفات</h3>
+                    <table class="w-full text-sm border">
+                        <thead class="bg-red-50">
+                            <tr><th class="p-2 text-right">نوع المصروف</th><th class="p-2 text-right">ملاحظات</th><th class="p-2 text-right">المبلغ</th></tr>
+                        </thead>
+                        <tbody>${expenseRows || '<tr><td colspan="3" class="text-center p-4">لا توجد مصاريف</td></tr>'}</tbody>
+                    </table>
                 </div>
             `;
 
@@ -1135,6 +1187,7 @@
             renderStats();
             renderOrdersTable();
             renderProductsTable();
+            renderExpensesTable(); // NEW
             renderCustomers();
             initChart();
             updateProductDropdown();
@@ -1146,7 +1199,6 @@
                  select.innerHTML = '<option value="" disabled selected>لا توجد منتجات، أضف منتجاً أولاً</option>';
             } else {
                  let options = '<option value="" disabled selected>اختر منتجاً...</option>';
-                
                  
                  options += products.map(p => `<option value="${p.name}" data-price="${p.price}" data-desc="${p.description || ''}">${p.name} (المتوفر: ${p.stock})</option>`).join('');
                  select.innerHTML = options;
@@ -1183,21 +1235,20 @@
 
 
         function renderStats() {
-            const totalSales = orders.reduce((sum, order) => sum + parseFloat(order.amount || 0), 0);
-            const totalProfits = orders.reduce((sum, order) => sum + parseFloat(order.profit || 0), 0);
-            const activeOrders = orders.filter(o => o.status === 'pending').length;
+            const totalSalesValue = orders.reduce((sum, order) => sum + parseFloat(order.amount || 0), 0);
+            const grossProfitsValue = orders.reduce((sum, order) => sum + parseFloat(order.profit || 0), 0);
+            const totalExpValue = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount || 0), 0);
             
-            const uniqueCustomerKeys = new Set(orders.map(o => {
-                 const name = o.customer || '';
-                 const email = (o.customerEmail || '').trim().toLowerCase();
-                 const phone = (o.customerPhone || '').trim();
-                 return `${name}|${email}|${phone}`;
-            }));
+            // The Logic: Net Profit = Gross Profit (from goods) - Total Operational Expenses
+            const netProfitValue = grossProfitsValue - totalExpValue;
 
-            document.getElementById('totalSales').innerText = formatMoney(totalSales);
-            document.getElementById('totalOrders').innerText = activeOrders;
+            document.getElementById('totalSales').innerText = formatMoney(totalSalesValue);
+            document.getElementById('grossProfits').innerText = formatMoney(grossProfitsValue);
+            document.getElementById('totalExpenses').innerText = formatMoney(totalExpValue);
+            document.getElementById('totalProfits').innerText = formatMoney(netProfitValue);
+            
+            const uniqueCustomerKeys = new Set(orders.map(o => `${o.customer}|${(o.customerEmail || '').trim().toLowerCase()}|${(o.customerPhone || '').trim()}`));
             document.getElementById('totalCustomers').innerText = uniqueCustomerKeys.size; 
-            document.getElementById('totalProfits').innerText = formatMoney(totalProfits);
         }
 
         function renderOrdersTable() {
@@ -1215,8 +1266,7 @@
                 <tr class="hover:bg-gray-50 border-b border-gray-50 last:border-0 group">
                     <td class="px-3 sm:px-6 py-4 font-bold text-gray-700">${order.id.substring(0, 8)}</td>
                     <td class="px-3 sm:px-6 py-4">${order.customer}</td>
-                    <td class="px-3 sm:px-6 py-4 text-gray-600 text-xs font-mono">${order.customerPhone || '-'}</td> <!-- NEW CELL -->
-                    <td class="px-3 sm:px-6 py-4">
+                    <td class="px-3 sm:px-6 py-4 text-gray-600 text-xs font-mono">${order.customerPhone || '-'}</td> <td class="px-3 sm:px-6 py-4">
                         <div class="font-bold text-gray-800">${order.product}</div>
                         <div class="text-xs text-gray-400 mt-1">${displayDesc}</div>
                     </td>
@@ -1248,6 +1298,75 @@
             }
         }
 
+        // NEW: Expenses Logic
+        function renderExpensesTable() {
+            const tableBody = document.getElementById('expensesTableBody');
+            if(!tableBody) return;
+            tableBody.innerHTML = expenses.map(e => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 font-bold">${e.type}</td>
+                    <td class="px-6 py-4 text-red-600 font-bold">${formatMoney(parseFloat(e.amount))}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${e.date}</td>
+                    <td class="px-6 py-4 text-xs text-gray-400 italic">${e.note || '-'}</td>
+                    <td class="px-6 py-4 flex gap-2">
+                        <button onclick="editExpense('${e.id}')" class="text-blue-500 hover:text-blue-700"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteExpense('${e.id}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="5" class="text-center py-10 text-gray-400">لا توجد مصروفات مسجلة</td></tr>';
+        }
+
+        window.openExpenseModal = (id = null) => {
+            document.getElementById('addExpenseModal').classList.remove('hidden');
+            document.getElementById('expenseForm').reset();
+            document.getElementById('editingExpenseId').value = "";
+            document.getElementById('expenseDate').valueAsDate = new Date();
+            
+            if(id) {
+                const exp = expenses.find(e => e.id === id);
+                if(exp) {
+                    document.getElementById('expenseModalTitle').innerText = "تعديل المصروف";
+                    document.getElementById('editingExpenseId').value = id;
+                    document.getElementById('expenseType').value = exp.type;
+                    document.getElementById('expenseAmount').value = exp.amount;
+                    document.getElementById('expenseDate').value = exp.date;
+                    document.getElementById('expenseNote').value = exp.note || '';
+                }
+            } else {
+                document.getElementById('expenseModalTitle').innerText = "إضافة مصروف جديد";
+            }
+        }
+
+        window.closeExpenseModal = () => document.getElementById('addExpenseModal').classList.add('hidden');
+
+        document.getElementById('expenseForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(!currentUser) return;
+            const id = document.getElementById('editingExpenseId').value;
+            const data = {
+                type: document.getElementById('expenseType').value,
+                amount: parseFloat(document.getElementById('expenseAmount').value),
+                date: document.getElementById('expenseDate').value,
+                note: document.getElementById('expenseNote').value,
+                updatedAt: serverTimestamp()
+            };
+            try {
+                if(id) await updateDoc(doc(db, `users/${currentUser.uid}/expenses`, id), data);
+                else {
+                    data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, `users/${currentUser.uid}/expenses`), data);
+                }
+                closeExpenseModal();
+            } catch(err) { console.error(err); alert("خطأ في الحفظ"); }
+        });
+
+        window.deleteExpense = async (id) => {
+            if(confirm('هل تريد حذف هذا المصروف؟')) {
+                try { await deleteDoc(doc(db, `users/${currentUser.uid}/expenses`, id)); } 
+                catch(err) { console.error(err); }
+            }
+        }
+
         window.quickCompleteOrder = async (id) => {
             if(!currentUser) return;
             const orderRef = doc(db, `users/${currentUser.uid}/orders`, id);
@@ -1272,8 +1391,7 @@
                     <td class="px-3 sm:px-6 py-4">${p.category}</td>
                     <td class="px-3 sm:px-6 py-4">${formatMoney(parseFloat(p.price))}</td>
                     <td class="px-3 sm:px-6 py-4 text-gray-500">${formatMoney(parseFloat(p.cost || 0))}</td>
-                    <td class="px-3 sm:px-6 py-4 text-green-600 font-bold">${formatMoney(profit)}</td> <!-- PROFIT COLUMN -->
-                    <td class="px-3 sm:px-6 py-4 ${stockClass}">${p.stock}</td>
+                    <td class="px-3 sm:px-6 py-4 text-green-600 font-bold">${formatMoney(profit)}</td> <td class="px-3 sm:px-6 py-4 ${stockClass}">${p.stock}</td>
                     <td class="px-3 sm:px-6 py-4"><span class="px-2 py-1 rounded text-xs font-bold ${p.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${p.status}</span></td>
                     <td class="px-3 sm:px-6 py-4 flex gap-2">
                         <button onclick="editProduct('${p.id}')" class="text-blue-500 hover:text-blue-700 text-sm"><i class="fa-solid fa-pen"></i></button>
@@ -1288,24 +1406,20 @@
             // --- UPDATED BEST SELLING LOGIC ---
             const topContainer = document.getElementById('topProductsContainer');
             if(topContainer) {
-                 // 1. Calculate sales count for each product from orders
                  const salesCounts = {};
                  orders.forEach(o => {
-                     // We include all orders (or could filter for status 'completed' only)
                      if(o.status !== 'cancelled') {
                         const qty = parseInt(o.quantity) || 0;
                         salesCounts[o.product] = (salesCounts[o.product] || 0) + qty;
                      }
                  });
 
-                 // 2. Sort products based on calculated sales count
                  const rankedProducts = [...products].sort((a, b) => {
                      const soldA = salesCounts[a.name] || 0;
                      const soldB = salesCounts[b.name] || 0;
                      return soldB - soldA; // Descending order
                  });
 
-                 // 3. Render Top 3
                  topContainer.innerHTML = rankedProducts.slice(0,3).map(p => {
                     const soldCount = salesCounts[p.name] || 0;
                     return `
@@ -1330,7 +1444,6 @@
                 return;
             }
             grid.innerHTML = customersToRender.map(c => {
-                // Encode basic info to pass to modal opener
                 const encodedInfo = encodeURIComponent(JSON.stringify({name: c.name, email: c.email, phone: c.phone}));
                 
                 return `
@@ -1349,18 +1462,14 @@
             `}).join('');
         }
         
-        // --- NEW: Open Customer Details Logic ---
         window.openCustomerDetails = (encodedInfo) => {
              const info = JSON.parse(decodeURIComponent(encodedInfo));
              
-             // 1. Populate Header Info
              document.getElementById('custModalName').innerText = info.name;
              document.getElementById('custModalAvatar').innerText = info.name.charAt(0);
              document.getElementById('custModalEmail').innerHTML = `<i class="fa-solid fa-envelope ml-1"></i> ${info.email || 'غير متوفر'}`;
              document.getElementById('custModalPhone').innerHTML = `<i class="fa-solid fa-phone ml-1"></i> ${info.phone || 'غير متوفر'}`;
              
-             // 2. Filter Orders specifically for this customer
-             // Matches strict logic used in getFilteredCustomers
              const customerOrders = orders.filter(o => {
                  const oName = o.customer;
                  const oEmail = (o.customerEmail || '').trim().toLowerCase();
@@ -1368,7 +1477,6 @@
                  return oName === info.name && oEmail === (info.email || '') && oPhone === (info.phone || '');
              });
 
-             // 3. Calculate Stats
              const totalSpent = customerOrders.reduce((sum, o) => sum + parseFloat(o.amount || 0), 0);
              const count = customerOrders.length;
              const avgOrder = count > 0 ? totalSpent / count : 0;
@@ -1377,7 +1485,6 @@
              document.getElementById('custModalOrdersCount').innerText = count;
              document.getElementById('custModalAvgOrder').innerText = formatMoney(avgOrder);
 
-             // 4. Render Orders Table
              const tableBody = document.getElementById('custModalOrdersTable');
              const noOrdersMsg = document.getElementById('custModalNoOrders');
              
@@ -1396,13 +1503,10 @@
                  `).join('');
              }
 
-             // 5. Show Modal
              document.getElementById('customerDetailsModal').classList.remove('hidden');
         };
 
-        window.closeCustomerModal = () => {
-            document.getElementById('customerDetailsModal').classList.add('hidden');
-        };
+        window.closeCustomerModal = () => document.getElementById('customerDetailsModal').classList.add('hidden');
 
         function getStatusClass(status) {
             return status === 'completed' ? 'bg-green-100 text-green-700' : (status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700');
@@ -1456,6 +1560,19 @@
                 document.getElementById('sidebar').classList.add('hidden'); 
                 document.getElementById('sidebarOverlay').classList.add('hidden'); 
             }
+            
+            // Set Page Title
+            const titles = {
+                'dashboard': 'نظرة عامة',
+                'products': 'إدارة المنتجات',
+                'orders': 'سجل الطلبات',
+                'customers': 'قاعدة العملاء',
+                'expenses': 'إدارة المصروفات',
+                'reports': 'التقارير المالية',
+                'settings': 'الإعدادات'
+            };
+            document.getElementById('pageTitle').innerText = titles[viewName] || 'SalesPro';
+            
             renderAll(); 
         };
 
@@ -1483,14 +1600,9 @@
              }
         };
 
-        window.editProduct = (id) => {
-            window.openProductModal(id);
-        };
+        window.editProduct = (id) => window.openProductModal(id);
+        window.closeProductModal = () => document.getElementById('addProductModal').classList.add('hidden');
 
-        window.closeProductModal = () => {
-             document.getElementById('addProductModal').classList.add('hidden');
-             document.getElementById('productModalContent').classList.add('scale-95');
-        };
         document.getElementById('productForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             if(!currentUser) return;
@@ -1508,45 +1620,30 @@
             };
 
             try {
-                if (editingId) {
-                    await updateDoc(doc(db, `users/${currentUser.uid}/products`, editingId), newProd);
-                } else {
+                if (editingId) await updateDoc(doc(db, `users/${currentUser.uid}/products`, editingId), newProd);
+                else {
                     newProd.createdAt = serverTimestamp();
                     await addDoc(collection(db, `users/${currentUser.uid}/products`), newProd);
                 }
-                
-                window.closeProductModal();
-                document.getElementById('productForm').reset();
-            } catch (e) {
-                console.error("Error saving product:", e);
-                alert("حدث خطأ أثناء حفظ المنتج");
-            }
+                closeProductModal();
+            } catch (e) { console.error(e); alert("خطأ في الحفظ"); }
         });
 
         window.deleteProduct = async (id) => {
             if(!currentUser) return;
             if(confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
-                try {
-                    await deleteDoc(doc(db, `users/${currentUser.uid}/products`, id));
-                } catch (e) {
-                    console.error("Error deleting product:", e);
-                    alert("حدث خطأ أثناء حذف المنتج");
-                }
+                try { await deleteDoc(doc(db, `users/${currentUser.uid}/products`, id)); } catch (e) { console.error(e); }
             }
         };
 
         window.openOrderModal = (id = null) => {
             if (id === null && products.length === 0) {
-                alert("لا يمكن إنشاء طلب جديد لعدم وجود منتجات. الرجاء إضافة منتجات أولاً.");
+                alert("لا يمكن إنشاء طلب جديد لعدم وجود منتجات.");
                 return;
             }
 
             document.getElementById('addOrderModal').classList.remove('hidden');
-            document.getElementById('orderModalContent').classList.remove('scale-95');
             document.getElementById('orderForm').reset();
-            document.getElementById('selectedProductDesc').classList.add('hidden'); // Hide desc initially
-            document.getElementById('orderQuantity').value = 1; // Default quantity
-            
             document.getElementById('orderDate').valueAsDate = new Date();
 
             if (id !== null && typeof id === 'string') {
@@ -1563,7 +1660,6 @@
                     document.getElementById('orderStatus').value = order.status;
                     document.getElementById('orderDate').value = order.date;
                     document.getElementById('orderDescription').value = order.description || '';
-                    
                     updateOrderCalculations();
                 }
             } else {
@@ -1572,14 +1668,8 @@
             }
         };
         
-        window.editOrder = (id) => {
-            window.openOrderModal(id);
-        }
-
-        window.closeOrderModal = () => {
-            document.getElementById('addOrderModal').classList.add('hidden');
-            document.getElementById('orderModalContent').classList.add('scale-95');
-        };
+        window.editOrder = (id) => window.openOrderModal(id);
+        window.closeOrderModal = () => document.getElementById('addOrderModal').classList.add('hidden');
 
         document.getElementById('orderForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -1590,64 +1680,48 @@
             const quantity = parseInt(document.getElementById('orderQuantity').value);
             const amount = parseFloat(document.getElementById('orderAmount').value);
             
-            // --- INVENTORY CHECK ---
             const selectedProduct = products.find(p => p.name === productVal);
             if (!selectedProduct) return alert("المنتج غير موجود");
 
             if (!editingId && selectedProduct.stock < quantity) {
-                return alert(`عذراً، الكمية المطلوبة غير متوفرة. المتاح حالياً: ${selectedProduct.stock}`);
-            } else if (!editingId && selectedProduct.stock === 0) {
-                 return alert("عذراً، هذا المنتج نافذ من المخزون.");
+                return alert(`الكمية غير متوفرة. المتاح: ${selectedProduct.stock}`);
             }
 
-            const costPerUnit = selectedProduct.cost || 0;
-            const totalCost = costPerUnit * quantity;
-            const profit = amount - totalCost;
+            const profit = amount - ((selectedProduct.cost || 0) * quantity);
             
-            const snapshotDesc = selectedProduct.description || '';
-
             const orderData = {
                 customer: document.getElementById('customerName').value,
                 customerEmail: document.getElementById('customerEmail').value,
                 customerPhone: document.getElementById('customerPhone').value,
                 product: productVal,
                 quantity: quantity, 
-                snapshotDescription: snapshotDesc,
+                snapshotDescription: selectedProduct.description || '',
                 amount: amount,
                 profit: profit,
                 status: document.getElementById('orderStatus').value,
                 date: document.getElementById('orderDate').value,
-                description: document.getElementById('orderDescription').value, // Order-specific notes
+                description: document.getElementById('orderDescription').value,
                 updatedAt: serverTimestamp()
             };
 
             try {
-                if (editingId) {
-                    await updateDoc(doc(db, `users/${currentUser.uid}/orders`, editingId), orderData);
-                } else {
+                if (editingId) await updateDoc(doc(db, `users/${currentUser.uid}/orders`, editingId), orderData);
+                else {
                     orderData.createdAt = serverTimestamp();
                     await addDoc(collection(db, `users/${currentUser.uid}/orders`), orderData);
-                    
                     const newStock = selectedProduct.stock - quantity;
-                    const productRef = doc(db, `users/${currentUser.uid}/products`, selectedProduct.id);
-                    
-                    await updateDoc(productRef, {
-                        stock: newStock,
-                        status: newStock > 0 ? 'متوفر' : 'نفذت' // Auto update status
-                    });
+                    await updateDoc(doc(db, `users/${currentUser.uid}/products`, selectedProduct.id), { stock: newStock, status: newStock > 0 ? 'متوفر' : 'نفذت' });
                 }
-                
-                window.closeOrderModal();
-                window.switchView('dashboard');
-            } catch (e) {
-                console.error("Error saving order:", e);
-                alert("حدث خطأ أثناء حفظ الطلب");
-            }
+                closeOrderModal();
+                switchView('dashboard');
+            } catch (e) { console.error(e); }
         });
 
+        window.editExpense = (id) => window.openExpenseModal(id);
+
         window.generateDashboardInsights = async () => {
-             const prompt = `تحليل مبيعات: إجمالي ${document.getElementById('totalSales').innerText}، عدد الطلبات ${orders.length}. أعط نصيحة قصيرة.`;
-             await callGeminiUI(prompt, "تحليل المبيعات الذكي");
+             const prompt = `أعطني نصيحة تجارية ذكية بناءً على: مبيعات ${document.getElementById('totalSales').innerText}، وصافي ربح ${document.getElementById('totalProfits').innerText}، مع العلم أن إجمالي المصاريف هو ${document.getElementById('totalExpenses').innerText}.`;
+             await callGeminiUI(prompt, "تحليل مالي ذكي");
         };
         
         async function callGeminiUI(prompt, title) {
@@ -1657,7 +1731,7 @@
             document.getElementById('aiLoading').classList.remove('hidden');
             modal.classList.remove('hidden');
             try {
-                const apiKey = ""; 
+                const apiKey = ""; // API Key used by SalesPro internal system
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
