@@ -1719,9 +1719,29 @@
 
         window.editExpense = (id) => window.openExpenseModal(id);
 
-        window.generateDashboardInsights = async () => {
-             const prompt = `أعطني نصيحة تجارية ذكية بناءً على: مبيعات ${document.getElementById('totalSales').innerText}، وصافي ربح ${document.getElementById('totalProfits').innerText}، مع العلم أن إجمالي المصاريف هو ${document.getElementById('totalExpenses').innerText}.`;
-             await callGeminiUI(prompt, "تحليل مالي ذكي");
+       window.generateDashboardInsights = async () => {
+             const sales = document.getElementById('totalSales').innerText;
+             const profits = document.getElementById('totalProfits').innerText;
+             const expenses = document.getElementById('totalExpenses').innerText;
+
+             // تحسين الأمر المرسل للذكاء الاصطناعي
+             const prompt = `
+                تصرف كمحلل مالي محترف ومختصر جداً لنظام إدارة مبيعات.
+                البيانات الحالية للمتجر هي:
+                - إجمالي المبيعات: ${sales}
+                - صافي الأرباح: ${profits}
+                - المصاريف: ${expenses}
+
+                التعليمات بدقة:
+                1. إذا كانت الأرقام (0 أو قريبة من الصفر): قل فقط عبارة ترحيبية لطيفة ومشجعة (سطر واحد) تطلب من المستخدم البدء بإضافة منتجات وطلبات لكي يعمل التحليل. لا تقدم أي نصائح تجارية في هذه الحالة.
+                
+                2. إذا كانت هناك أرقام حقيقية:
+                   - حلل الوضع المالي في سطرين فقط.
+                   - أعطِ نصيحة واحدة قوية ومباشرة لزيادة الربح.
+                   - استخدم لغة الأرقام وتجنب الكلام النظري الطويل.
+             `;
+             
+             await callGeminiUI(prompt, "تحليل SalesPro الذكي");
         };
         
         async function callGeminiUI(prompt, title) {
@@ -1761,5 +1781,6 @@
     </script>
 </body>
 </html>
+
 
 
