@@ -68,6 +68,18 @@
             font-weight: 700;
         }
 
+        /* تأثير النبض للزر السحري */
+        .magic-btn:active {
+            transform: scale(0.95);
+        }
+        .magic-loading {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
 
         @media (max-width: 640px) {
             th, td {
@@ -346,7 +358,7 @@
                         </div>
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition ring-2 ring-orange-100">
                             <div class="flex justify-between items-start mb-4">
-                                <div><p class="text-sm text-orange-600 font-bold mb-1">صافي الربح النهائي</p><h3 class="text-2xl font-black text-gray-800" id="totalProfits">$0</h3></div>
+                                <div><p class="text-sm text-orange-600 font-bold mb-1">صافي الربح النهائي</p><h3 class="text-2xl font-bold text-gray-800" id="totalProfits">$0</h3></div>
                                 <div class="p-3 bg-orange-50 text-orange-600 rounded-xl"><i class="fa-solid fa-wallet text-xl"></i></div>
                             </div>
                         </div>
@@ -608,7 +620,15 @@
                       </div>
                 </div>
 
-                <textarea id="orderDescription" placeholder="ملاحظات إضافية على الطلب (اختياري)" class="w-full px-4 py-2 border rounded-lg h-16"></textarea>
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-xs text-gray-500">ملاحظات الطلب</label>
+                        <button type="button" onclick="generateOrderNoteAI()" class="magic-btn text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition flex items-center gap-1">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> اقتراح ملاحظة
+                        </button>
+                    </div>
+                    <textarea id="orderDescription" placeholder="ملاحظات إضافية على الطلب (اختياري)" class="w-full px-4 py-2 border rounded-lg h-16"></textarea>
+                </div>
                 <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition">حفظ الطلب</button>
             </form>
         </div>
@@ -627,7 +647,16 @@
             <form id="productForm" class="space-y-4">
                 <input type="hidden" id="editingProductId">
                 <input type="text" id="newProdName" required placeholder="اسم المنتج" class="w-full px-4 py-2 border rounded-lg">
-                <textarea id="newProdDesc" placeholder="وصف المنتج (المواصفات الفنية، الألوان، المميزات) - سيظهر في التقرير" class="w-full px-4 py-2 border rounded-lg h-20 bg-gray-50 focus:bg-white transition"></textarea>
+                
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-xs text-gray-500">الوصف</label>
+                        <button type="button" onclick="generateProductDescAI()" class="magic-btn text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100 transition flex items-center gap-1">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> توليد وصف تلقائي
+                        </button>
+                    </div>
+                    <textarea id="newProdDesc" placeholder="وصف المنتج (المواصفات الفنية، الألوان، المميزات) - سيظهر في التقرير" class="w-full px-4 py-2 border rounded-lg h-20 bg-gray-50 focus:bg-white transition"></textarea>
+                </div>
                 
                 <input type="text" id="newProdCategory" required placeholder="التصنيف (مثال: إلكترونيات)" class="w-full px-4 py-2 border rounded-lg">
                 
@@ -776,7 +805,7 @@
 
         let orders = [];
         let products = [];
-        let expenses = []; // NEW
+        let expenses = []; 
         let customers = [];
         let chartInstance = null;
         let isLoginMode = true;
@@ -784,7 +813,7 @@
         let currentUser = null;
         let unsubscribeOrders = null;
         let unsubscribeProducts = null;
-        let unsubscribeExpenses = null; // NEW
+        let unsubscribeExpenses = null; 
         let unsubscribeSettings = null;
         let activeView = 'dashboard'; 
 
@@ -824,7 +853,7 @@
         function unsubscribeFromData() {
             if (unsubscribeOrders) unsubscribeOrders();
             if (unsubscribeProducts) unsubscribeProducts();
-            if (unsubscribeExpenses) unsubscribeExpenses(); // NEW
+            if (unsubscribeExpenses) unsubscribeExpenses(); 
             if (unsubscribeSettings) unsubscribeSettings();
             orders = [];
             products = [];
@@ -848,7 +877,6 @@
                 renderAll();
             });
 
-            // NEW: Subscribe to Expenses
             const expensesRef = collection(db, `users/${userId}/expenses`);
             const qExpenses = query(expensesRef, orderBy('date', 'desc'));
             unsubscribeExpenses = onSnapshot(qExpenses, (snapshot) => {
@@ -889,7 +917,6 @@
             renderAll(); 
         }
 
-        // --- Filtering Logic ---
         function getFilteredOrders() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const scope = document.getElementById('searchScope').value;
@@ -902,7 +929,7 @@
                 (o.id && o.id.toLowerCase().includes(query)) ||
                 (o.customer && o.customer.toLowerCase().includes(query)) ||
                 (o.product && o.product.toLowerCase().includes(query)) ||
-                (o.snapshotDescription && o.snapshotDescription.toLowerCase().includes(query)) // Search in linked description
+                (o.snapshotDescription && o.snapshotDescription.toLowerCase().includes(query)) 
             );
         }
 
@@ -1005,7 +1032,6 @@
                 const productsQuery = await getDocs(collection(db, `users/${currentUser.uid}/products`));
                 const productsPromises = productsQuery.docs.map(d => deleteDoc(d.ref));
 
-                // Clear expenses too
                 const expensesQuery = await getDocs(collection(db, `users/${currentUser.uid}/expenses`));
                 const expensesPromises = expensesQuery.docs.map(d => deleteDoc(d.ref));
 
@@ -1182,12 +1208,11 @@
             loginView.classList.remove('hidden');
         }
 
-        // --- Rendering Logic ---
         function renderAll() {
             renderStats();
             renderOrdersTable();
             renderProductsTable();
-            renderExpensesTable(); // NEW
+            renderExpensesTable(); 
             renderCustomers();
             initChart();
             updateProductDropdown();
@@ -1239,7 +1264,6 @@
             const grossProfitsValue = orders.reduce((sum, order) => sum + parseFloat(order.profit || 0), 0);
             const totalExpValue = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount || 0), 0);
             
-            // The Logic: Net Profit = Gross Profit (from goods) - Total Operational Expenses
             const netProfitValue = grossProfitsValue - totalExpValue;
 
             document.getElementById('totalSales').innerText = formatMoney(totalSalesValue);
@@ -1298,7 +1322,6 @@
             }
         }
 
-        // NEW: Expenses Logic
         function renderExpensesTable() {
             const tableBody = document.getElementById('expensesTableBody');
             if(!tableBody) return;
@@ -1403,7 +1426,6 @@
             const tbody = document.getElementById('productsTableBody');
             if(tbody) tbody.innerHTML = rows || '<tr><td colspan="8" class="text-center py-4 text-gray-400">لا توجد منتجات مطابقة</td></tr>';
             
-            // --- UPDATED BEST SELLING LOGIC ---
             const topContainer = document.getElementById('topProductsContainer');
             if(topContainer) {
                  const salesCounts = {};
@@ -1719,55 +1741,125 @@
 
         window.editExpense = (id) => window.openExpenseModal(id);
 
-       window.generateDashboardInsights = async () => {
+        window.generateDashboardInsights = async () => {
              const sales = document.getElementById('totalSales').innerText;
              const profits = document.getElementById('totalProfits').innerText;
              const expenses = document.getElementById('totalExpenses').innerText;
 
              const prompt = `
                 أنت مستشار مالي ذكي لنظام SalesPro. حلل العلاقة بين الأرقام التالية بدقة:
-                
                 - الدخل (المبيعات): ${sales}
                 - المصروفات (التكاليف التشغيلية): ${expenses}
                 - صافي الربح (النتيجة النهائية): ${profits}
 
                 قواعد الرد (مهم جداً):
                 1. (حالة الصفر): إذا كانت كل الأرقام 0، قل فقط: "أهلاً بك! ابدأ بتسجيل المبيعات والمصاريف وسأقوم بتحليل كفاءتك المالية فوراً."
-                
                 2. (تحليل المصاريف):
                    - قارن المصاريف مع المبيعات. إذا كانت المصاريف تلتهم أكثر من 50% من المبيعات، حذر المستخدم فوراً واكتب: "⚠️ تنبيه: مصاريفك التشغيلية مرتفعة جداً مقارنة بالمبيعات وتؤثر على صافي ربحك."
                    - إذا كانت المبيعات عالية والربح قليل بسبب المصاريف، وضح له ذلك بصراحة.
                    - إذا كانت الأرباح عالية والمصاريف منخفضة، هنئه على "الكفاءة التشغيلية".
-
                 3. اجعل الرد مختصراً جداً (أقل من 60 كلمة) ومباشراً في صلب الموضوع.
              `;
              
-             await callGeminiUI(prompt, "تحليل الأداء والمصاريف");
+             await callGeminiUI(prompt, "تحليل الأداء والمصاريف", true);
         };
+
+        // --- New Functions for Auto-Generating Details ---
+
+        window.generateProductDescAI = async () => {
+            const name = document.getElementById('newProdName').value;
+            const category = document.getElementById('newProdCategory').value;
+            const targetField = document.getElementById('newProdDesc');
+
+            if(!name) return alert('الرجاء كتابة اسم المنتج أولاً!');
+
+            const prompt = `اكتب وصفاً تسويقياً جذاباً ومختصراً (لا يتجاوز سطرين) لمنتج اسمه "${name}" يندرج تحت تصنيف "${category || 'عام'}". ركز على المميزات والفوائد.`;
+            
+            await generateTextForField(prompt, targetField);
         };
-        
-        async function callGeminiUI(prompt, title) {
-            const modal = document.getElementById('aiResultModal');
-            document.getElementById('aiModalTitle').innerText = title;
-            document.getElementById('aiResponseText').innerHTML = '';
-            document.getElementById('aiLoading').classList.remove('hidden');
-            modal.classList.remove('hidden');
+
+        window.generateOrderNoteAI = async () => {
+            const customer = document.getElementById('customerName').value;
+            const product = document.getElementById('productNameSelect').value;
+            const targetField = document.getElementById('orderDescription');
+
+            if(!customer || !product) return alert('الرجاء اختيار العميل والمنتج أولاً!');
+
+            const prompt = `اكتب ملاحظة رسمية مهنية قصيرة جداً (سطر واحد) تضاف لفاتورة العميل "${customer}" الذي اشترى منتج "${product}". اشكره وتمنى له التوفيق.`;
+
+            await generateTextForField(prompt, targetField);
+        };
+
+        // Helper function for inline generation
+        async function generateTextForField(prompt, targetElement) {
+            // Show loading state on the button itself if possible, or simple placeholder
+            const originalPlaceholder = targetElement.placeholder;
+            targetElement.placeholder = "جاري التوليد بالذكاء الاصطناعي... ⏳";
+            targetElement.disabled = true;
+
             try {
                 const apiKey = "AIzaSyAQhplJ0Ez0zHMr2AYg-UK6w033ZhEzfmY"; 
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
+
                 const data = await response.json();
-                const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "لا توجد استجابة";
-                document.getElementById('aiResponseText').innerHTML = marked.parse(text);
+                
+                if (data.error) {
+                    console.error(data.error);
+                    alert("خطأ AI: " + data.error.message);
+                } else {
+                    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                    targetElement.value = text.trim();
+                }
             } catch (e) {
-                document.getElementById('aiResponseText').innerText = "حدث خطأ في الاتصال";
+                console.error(e);
+                alert("فشل الاتصال");
             } finally {
-                document.getElementById('aiLoading').classList.add('hidden');
+                targetElement.placeholder = originalPlaceholder;
+                targetElement.disabled = false;
             }
         }
+        
+        async function callGeminiUI(prompt, title, showModal = true) {
+            if(showModal) {
+                const modal = document.getElementById('aiResultModal');
+                document.getElementById('aiModalTitle').innerText = title;
+                document.getElementById('aiResponseText').innerHTML = '';
+                document.getElementById('aiLoading').classList.remove('hidden');
+                modal.classList.remove('hidden');
+            }
+
+            try {
+                const apiKey = "AIzaSyAQhplJ0Ez0zHMr2AYg-UK6w033ZhEzfmY"; 
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    const msg = "خطأ في التصريح: " + data.error.message;
+                    if(showModal) document.getElementById('aiResponseText').innerText = msg;
+                    return msg;
+                } else {
+                    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "لا توجد إجابة";
+                    if(showModal) document.getElementById('aiResponseText').innerHTML = marked.parse(text);
+                    return text;
+                }
+
+            } catch (e) {
+                console.error(e);
+                if(showModal) document.getElementById('aiResponseText').innerText = "فشل الاتصال بالخدمة";
+            } finally {
+                if(showModal) document.getElementById('aiLoading').classList.add('hidden');
+            }
+        }
+
         window.closeAiModal = () => document.getElementById('aiResultModal').classList.add('hidden');
         
         document.getElementById('sidebarToggle')?.addEventListener('click', () => {
@@ -1783,7 +1875,3 @@
     </script>
 </body>
 </html>
-
-
-
-
