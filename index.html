@@ -1817,205 +1817,234 @@
 
         window.editExpense = (id) => window.openExpenseModal(id);
 
-        /* ----------------------------------------------------- */
-        /* -------------------- AI FUNCTIONS ------------------- */
-        /* ----------------------------------------------------- */
 
-        // 1. Dashboard Analysis
-        window.generateDashboardInsights = async () => {
-             const sales = document.getElementById('totalSales').innerText;
-             const profits = document.getElementById('totalProfits').innerText;
-             const expensesVal = document.getElementById('totalExpenses').innerText;
-             
-             const prompt = `
-                أنت مستشار مالي ذكي لنظام SalesPro. حلل العلاقة بين الأرقام التالية بدقة:
-                
-                - الدخل (المبيعات): ${sales}
-                - المصروفات: ${expensesVal}
-                - صافي الربح: ${profits}
-
-                قواعد الرد:
-                1. (حالة الصفر): إذا كانت كل الأرقام 0، قل: "أهلاً بك! ابدأ بتسجيل المبيعات والمصاريف وسأقوم بتحليل كفاءتك المالية فوراً."
-                2. حلل نسبة المصاريف للمبيعات.
-                3. اقترح نصيحة واحدة للنمو.
-                4. اجعل الرد مختصراً جداً (أقل من 60 كلمة).
-             `;
-             
-             await callGeminiUI(prompt, "تحليل الأداء والمصاريف");
-        };
-
-        // 2. Product Description Generator
-        window.generateProductDescription = async () => {
-            const name = document.getElementById('newProdName').value;
-            const category = document.getElementById('newProdCategory').value;
-            const price = document.getElementById('newProdPrice').value;
-
-            if(!name) return alert("الرجاء كتابة اسم المنتج أولاً");
-
-            const btn = document.querySelector('#productForm button[type="button"]');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> جاري الكتابة...';
-            btn.disabled = true;
-
-            const prompt = `
-                اكتب وصفاً تسويقياً جذاباً ومختصراً (حوالي سطرين أو ثلاثة) لمنتج بالبيانات التالية:
-                - الاسم: ${name}
-                - التصنيف: ${category}
-                - السعر: ${price}
-                
-                اجعل الوصف يركز على الفوائد ويجذب المشتري. لا تضع أقواس أو علامات تنصيص. باللغة العربية.
-            `;
-
-            try {
-                const description = await callGeminiAPI(prompt);
-                document.getElementById('newProdDesc').value = description;
-            } catch (e) {
-                alert("فشل توليد الوصف");
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        };
-
-        // 3. Customer Strategy Analyzer
-        window.analyzeCustomerStrategy = async () => {
-            const name = document.getElementById('custModalName').innerText;
-            const spent = document.getElementById('custModalTotalSpent').innerText;
-            const count = document.getElementById('custModalOrdersCount').innerText;
-            
-            // Get recent products bought by this customer
-            const recentOrders = orders.filter(o => o.customer === name).slice(0, 5).map(o => o.product).join(', ');
-
-            const prompt = `
-                أنت خبير في ولاء العملاء. حلل بيانات العميل "${name}":
-                - إجمالي الإنفاق: ${spent}
-                - عدد الطلبات: ${count}
-                - آخر مشتريات: ${recentOrders}
-
-                أعطني استراتيجية مخصصة من نقطتين لزيادة مبيعات هذا العميل أو الحفاظ عليه. كن عملياً ومختصراً.
-            `;
-
-            await callGeminiUI(prompt, `تحليل استراتيجي للعميل: ${name}`);
-        };
-
-        // 4. Expenses Analyzer
-        window.analyzeExpensesAI = async () => {
-            if(expenses.length === 0) return alert("لا توجد مصاريف لتحليلها");
-            
-            // Summarize expenses by type
-            const summary = {};
-            expenses.forEach(e => {
-                summary[e.type] = (summary[e.type] || 0) + parseFloat(e.amount);
-            });
-            
-            const summaryString = Object.entries(summary).map(([k,v]) => `${k}: ${v}`).join(', ');
-
-            const prompt = `
-                حلل هذه المصروفات واقترح طريقة لتقليل التكاليف:
-                ${summaryString}
-                
-                ركز على أعلى بند في المصاريف وأعط نصيحة عملية واحدة لتقليله. اجعل الرد قصيراً.
-            `;
-            
-            await callGeminiUI(prompt, "تحليل المصروفات الذكي");
-        }
-
-        // 5. Global Chatbot Logic
-        window.toggleAIChat = () => {
-            const chatWin = document.getElementById('globalAIChatWindow');
-            if (chatWin.style.display === 'flex') {
-                chatWin.style.display = 'none';
-            } else {
-                chatWin.style.display = 'flex';
-                document.getElementById('chatInput').focus();
-            }
-        };
-
-        window.sendChatMessage = async () => {
-            const input = document.getElementById('chatInput');
-            const msg = input.value.trim();
-            if(!msg) return;
-
-            // Add user message
-            const chatBody = document.getElementById('chatBody');
-            chatBody.innerHTML += `<div class="msg-bubble msg-user">${msg}</div>`;
-            input.value = '';
-            chatBody.scrollTop = chatBody.scrollHeight;
-
-            // Add loading indicator
-            const loadingId = 'loading-' + Date.now();
-            chatBody.innerHTML += `<div id="${loadingId}" class="msg-bubble msg-ai"><i class="fa-solid fa-spinner animate-spin"></i> جاري التفكير...</div>`;
-            chatBody.scrollTop = chatBody.scrollHeight;
-
-            // Prepare Context (Limit context size to avoid errors)
-            const productsContext = products.slice(0, 20).map(p => `${p.name} (${p.price}, ${p.stock} stock)`).join('; ');
-            const recentOrdersContext = orders.slice(0, 10).map(o => `${o.product} sold to ${o.customer} for ${o.amount}`).join('; ');
-            const totalSalesVal = document.getElementById('totalSales').innerText;
-
-            const prompt = `
-                أنت مساعد ذكي لمدير متجر. لديك البيانات التالية عن المتجر حالياً:
-                - إجمالي المبيعات اليوم: ${totalSalesVal}
-                - بعض المنتجات المتوفرة: ${productsContext}
-                - آخر الطلبات: ${recentOrdersContext}
-
-                المستخدم يسألك: "${msg}"
-                
-                أجب بناءً على البيانات المتوفرة لديك. كن مساعداً، لطيفاً، ومختصراً. تكلم باللغة العربية.
-            `;
-
-            try {
-                const response = await callGeminiAPI(prompt);
-                document.getElementById(loadingId).innerText = response;
-            } catch (e) {
-                document.getElementById(loadingId).innerText = "عذراً، حدث خطأ في الاتصال.";
-            }
-            chatBody.scrollTop = chatBody.scrollHeight;
-        };
-
-        document.getElementById('chatInput').addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') sendChatMessage();
-        });
-
-        // Shared API Call Function
-        async function callGeminiAPI(prompt) {
-            const apiKey = "AIzaSyCdBc6ZFC0-XV5JHq_NIRwcNBImNbsWqXw"; 
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-            });
-            const data = await response.json();
-            return data.candidates?.[0]?.content?.parts?.[0]?.text || "لا توجد استجابة";
-        }
         
-        async function callGeminiUI(prompt, title) {
-            const modal = document.getElementById('aiResultModal');
-            document.getElementById('aiModalTitle').innerText = title;
-            document.getElementById('aiResponseText').innerHTML = '';
-            document.getElementById('aiLoading').classList.remove('hidden');
-            modal.classList.remove('hidden');
-            try {
-                const text = await callGeminiAPI(prompt);
-                document.getElementById('aiResponseText').innerHTML = marked.parse(text);
-            } catch (e) {
-                document.getElementById('aiResponseText').innerText = "حدث خطأ في الاتصال";
-            } finally {
-                document.getElementById('aiLoading').classList.add('hidden');
-            }
-        }
+const MISTRAL_API_KEY = "1cEG4yh8geBMECoEFvUP9351nxKcbnjc"; 
 
-        window.closeAiModal = () => document.getElementById('aiResultModal').classList.add('hidden');
+window.generateDashboardInsights = async () => {
+    const sales = document.getElementById('totalSales').innerText;
+    const profits = document.getElementById('totalProfits').innerText;
+    const expensesVal = document.getElementById('totalExpenses').innerText;
+    
+    const prompt = `
+        أنت مستشار مالي ذكي لنظام SalesPro. حلل العلاقة بين الأرقام التالية بدقة:
         
-        document.getElementById('sidebarToggle')?.addEventListener('click', () => {
-            document.getElementById('sidebar').classList.remove('hidden', 'translate-x-full');
-            document.getElementById('sidebarOverlay').classList.remove('hidden');
-        });
-        document.getElementById('sidebarOverlay')?.addEventListener('click', () => {
-            document.getElementById('sidebar').classList.add('hidden', 'translate-x-full');
-            document.getElementById('sidebarOverlay').classList.add('hidden');
-        });
+        - الدخل (المبيعات): ${sales}
+        - المصروفات: ${expensesVal}
+        - صافي الربح: ${profits}
+
+        قواعد الرد:
+        1. (حالة الصفر): إذا كانت كل الأرقام 0، قل: "أهلاً بك! ابدأ بتسجيل المبيعات والمصاريف وسأقوم بتحليل كفاءتك المالية فوراً."
+        2. حلل نسبة المصاريف للمبيعات.
+        3. اقترح نصيحة واحدة للنمو.
+        4. اجعل الرد مختصراً جداً (أقل من 60 كلمة).
+    `;
+    
+    await callMistralUI(prompt, "تحليل الأداء والمصاريف");
+};
+
+window.generateProductDescription = async () => {
+    const name = document.getElementById('newProdName').value;
+    const category = document.getElementById('newProdCategory').value;
+    const price = document.getElementById('newProdPrice').value;
+
+    if(!name) return alert("الرجاء كتابة اسم المنتج أولاً");
+
+    const btn = document.querySelector('#productForm button[type="button"]');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> جاري الكتابة...';
+    btn.disabled = true;
+
+    const prompt = `
+        اكتب وصفاً تسويقياً جذاباً ومختصراً (حوالي سطرين أو ثلاثة) لمنتج بالبيانات التالية:
+        - الاسم: ${name}
+        - التصنيف: ${category}
+        - السعر: ${price}
         
-        document.getElementById('reportDay').valueAsDate = new Date();
+        اجعل الوصف يركز على الفوائد ويجذب المشتري. لا تضع أقواس أو علامات تنصيص. باللغة العربية.
+    `;
+
+    try {
+        const description = await callMistralAPI(prompt);
+        document.getElementById('newProdDesc').value = description;
+    } catch (e) {
+        console.error(e);
+        alert("فشل توليد الوصف");
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+};
+
+window.analyzeCustomerStrategy = async () => {
+    const name = document.getElementById('custModalName').innerText;
+    const spent = document.getElementById('custModalTotalSpent').innerText;
+    const count = document.getElementById('custModalOrdersCount').innerText;
+    
+    
+    const recentOrders = typeof orders !== 'undefined' ? orders.filter(o => o.customer === name).slice(0, 5).map(o => o.product).join(', ') : "لا يوجد بيانات";
+
+    const prompt = `
+        أنت خبير في ولاء العملاء. حلل بيانات العميل "${name}":
+        - إجمالي الإنفاق: ${spent}
+        - عدد الطلبات: ${count}
+        - آخر مشتريات: ${recentOrders}
+
+        أعطني استراتيجية مخصصة من نقطتين لزيادة مبيعات هذا العميل أو الحفاظ عليه. كن عملياً ومختصراً.
+    `;
+
+    await callMistralUI(prompt, `تحليل استراتيجي للعميل: ${name}`);
+};
+
+window.analyzeExpensesAI = async () => {
+    if(typeof expenses === 'undefined' || expenses.length === 0) return alert("لا توجد مصاريف لتحليلها");
+    
+    const summary = {};
+    expenses.forEach(e => {
+        summary[e.type] = (summary[e.type] || 0) + parseFloat(e.amount);
+    });
+    
+    const summaryString = Object.entries(summary).map(([k,v]) => `${k}: ${v}`).join(', ');
+
+    const prompt = `
+        حلل هذه المصروفات واقترح طريقة لتقليل التكاليف:
+        ${summaryString}
+        
+        ركز على أعلى بند في المصاريف وأعط نصيحة عملية واحدة لتقليله. اجعل الرد قصيراً.
+    `;
+    
+    await callMistralUI(prompt, "تحليل المصروفات الذكي");
+}
+
+window.toggleAIChat = () => {
+    const chatWin = document.getElementById('globalAIChatWindow');
+    if (chatWin.style.display === 'flex') {
+        chatWin.style.display = 'none';
+    } else {
+        chatWin.style.display = 'flex';
+        document.getElementById('chatInput').focus();
+    }
+};
+
+window.sendChatMessage = async () => {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if(!msg) return;
+
+    const chatBody = document.getElementById('chatBody');
+    chatBody.innerHTML += `<div class="msg-bubble msg-user">${msg}</div>`;
+    input.value = '';
+    chatBody.scrollTop = chatBody.scrollHeight;
+
+    const loadingId = 'loading-' + Date.now();
+    chatBody.innerHTML += `<div id="${loadingId}" class="msg-bubble msg-ai"><i class="fa-solid fa-spinner animate-spin"></i> جاري التفكير...</div>`;
+    chatBody.scrollTop = chatBody.scrollHeight;
+
+    
+    const productsContext = typeof products !== 'undefined' ? products.slice(0, 20).map(p => `${p.name} (${p.price}, ${p.stock} stock)`).join('; ') : "";
+    const recentOrdersContext = typeof orders !== 'undefined' ? orders.slice(0, 10).map(o => `${o.product} sold to ${o.customer} for ${o.amount}`).join('; ') : "";
+    const totalSalesVal = document.getElementById('totalSales').innerText;
+
+    const prompt = `
+        أنت مساعد ذكي لمدير متجر. لديك البيانات التالية عن المتجر حالياً:
+        - إجمالي المبيعات اليوم: ${totalSalesVal}
+        - بعض المنتجات المتوفرة: ${productsContext}
+        - آخر الطلبات: ${recentOrdersContext}
+
+        المستخدم يسألك: "${msg}"
+        
+        أجب بناءً على البيانات المتوفرة لديك. كن مساعداً، لطيفاً، ومختصراً. تكلم باللغة العربية.
+    `;
+
+    try {
+        const response = await callMistralAPI(prompt);
+        document.getElementById(loadingId).innerText = response;
+    } catch (e) {
+        document.getElementById(loadingId).innerText = "عذراً، حدث خطأ في الاتصال.";
+        console.error(e);
+    }
+    chatBody.scrollTop = chatBody.scrollHeight;
+};
+
+document.getElementById('chatInput').addEventListener('keypress', (e) => {
+    if(e.key === 'Enter') sendChatMessage();
+});
+
+
+
+async function callMistralAPI(prompt) {
+    if (!MISTRAL_API_KEY || MISTRAL_API_KEY === "") {
+        alert("سنحاول معالجة الخطا");
+        throw new Error("Missing API Key");
+    }
+
+    const modelName = "mistral-small-latest"; 
+    
+
+    const response = await fetch("https://api.mistral.ai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${MISTRAL_API_KEY}`
+        },
+        body: JSON.stringify({
+            model: modelName,
+            messages: [
+                { role: "user", content: prompt }
+            ],
+            temperature: 0.7,
+            max_tokens: 500
+        })
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Mistral API Error: ${errorData.message || response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || "لا توجد استجابة";
+}
+
+
+async function callMistralUI(prompt, title) {
+    const modal = document.getElementById('aiResultModal');
+    document.getElementById('aiModalTitle').innerText = title;
+    document.getElementById('aiResponseText').innerHTML = '';
+    document.getElementById('aiLoading').classList.remove('hidden');
+    modal.classList.remove('hidden');
+    
+    try {
+        const text = await callMistralAPI(prompt);
+        if (typeof marked !== 'undefined' && marked.parse) {
+            document.getElementById('aiResponseText').innerHTML = marked.parse(text);
+        } else {
+            document.getElementById('aiResponseText').innerText = text;
+        }
+    } catch (e) {
+        document.getElementById('aiResponseText').innerText = "حدث خطأ في الاتصال: " + e.message;
+    } finally {
+        document.getElementById('aiLoading').classList.add('hidden');
+    }
+}
+
+window.closeAiModal = () => document.getElementById('aiResultModal').classList.add('hidden');
+
+document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+    document.getElementById('sidebar').classList.remove('hidden', 'translate-x-full');
+    document.getElementById('sidebarOverlay').classList.remove('hidden');
+});
+document.getElementById('sidebarOverlay')?.addEventListener('click', () => {
+    document.getElementById('sidebar').classList.add('hidden', 'translate-x-full');
+    document.getElementById('sidebarOverlay').classList.add('hidden');
+});
+
+if(document.getElementById('reportDay')) {
+    document.getElementById('reportDay').valueAsDate = new Date();
+}
+
     </script>
+
+   
 </body>
 </html>
