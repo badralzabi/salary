@@ -51,7 +51,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* AI Chatbot Styles */
         .ai-float-btn {
             position: fixed;
             bottom: 30px;
@@ -209,8 +208,7 @@
 </head>
 <body class="text-gray-800 antialiased h-screen overflow-hidden">
 
-    <!-- GLOBAL AI ASSISTANT -->
-    <div class="ai-float-btn" onclick="toggleAIChat()">
+    <div class="ai-float-btn hidden" id="aiFloatBtn" onclick="toggleAIChat()">
         <i class="fa-solid fa-robot"></i>
     </div>
 
@@ -229,7 +227,6 @@
             <button onclick="sendChatMessage()" class="bg-indigo-600 text-white w-10 h-10 rounded-lg hover:bg-indigo-700 transition"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
-    <!-- END GLOBAL AI -->
 
     <div id="auth-loading">
         <div class="flex flex-col items-center">
@@ -280,11 +277,19 @@
 
                 <div class="relative flex py-5 items-center">
                     <div class="flex-grow border-t border-gray-200"></div>
-                    <span class="flex-shrink-0 mx-4 text-gray-400 text-xs">بأستخدامك نظامنا فأنت توافق على شروط الاستخدام </span>
+                    <span class="flex-shrink-0 mx-4 text-gray-400 text-xs">روابط هامة</span>
                     <div class="flex-grow border-t border-gray-200"></div>
                 </div>
 
-                <div class="text-center mt-2">
+                <div class="flex justify-center gap-4 text-xs text-gray-500 mb-4">
+                    <button  class="hover:text-indigo-600 transition hover:underline"><a href="./privacy_policy/" target="_blank">سياسة الخصوصية</a></button>
+                    <span class="text-gray-300">|</span>
+                    <button  class="hover:text-indigo-600 transition hover:underline"><a href="./terms_use/" target="_blank">شروط الاستخدام</a></button>
+                    <span class="text-gray-300">|</span>
+                    <button  class="hover:text-indigo-600 transition hover:underline"><a href="./who_by/" target="_blank">كيف تشترك معنا</a></button>
+                </div>
+
+                <div class="text-center mt-2 border-t pt-4">
                     <p class="text-sm text-gray-600">
                         <button type="button" id="toggleAuthMode" class="text-indigo-600 font-bold hover:underline">
                              حساب جديد؟
@@ -336,12 +341,33 @@
                     <i class="fa-solid fa-file-invoice-dollar"></i>
                     <span>التقارير المالية</span>
                 </a>
+                
                 <p class="text-xs font-semibold text-gray-400 px-2 mt-6 mb-2">الإعدادات</p>
                 <a href="#" onclick="switchView('settings')" id="nav-settings" class="nav-item flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-indigo-600 rounded-xl transition-colors">
                     <i class="fa-solid fa-gear"></i>
                     <span>الإعدادات العامة</span>
                 </a>
+
+                <p class="text-xs font-semibold text-gray-400 px-2 mt-6 mb-2">المساعدة والقانونية</p>
+                <a href="#" onclick="openInfoModal('subscribe')" class="nav-item flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-gray-50 hover:text-indigo-600 rounded-xl transition-colors text-sm">
+                <i class="fa-solid fa-user-gear text-blue-500"></i>
+
+
+                    <span>مطور النظام</span>
+                </a>
+                <a  href="./privacy_policy/" target="_blank" class="nav-item flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-gray-50 hover:text-indigo-600 rounded-xl transition-colors text-sm">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>سياسة الخصوصية</span>
+                </a>
+                <a href="./terms_use/" target="_blank" class="nav-item flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-gray-50 hover:text-indigo-600 rounded-xl transition-colors text-sm">
+                    <i class="fa-solid fa-file-contract"></i>
+                    <span>شروط الاستخدام</span>
+                </a>
             </nav>
+            
+
+
+       
 
             <div class="p-4 border-t border-gray-100">
                 <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 cursor-pointer transition">
@@ -857,6 +883,21 @@
         </div>
     </div>
 
+    <div id="infoModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeInfoModal()"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl w-full max-w-2xl p-0 scale-95 transition-transform max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+            <div class="bg-indigo-600 p-4 text-white flex justify-between items-center shrink-0">
+                <h3 class="font-bold text-lg" id="infoModalTitle">العنوان</h3>
+                <button onclick="closeInfoModal()" class="hover:text-gray-200"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto bg-gray-50 text-gray-700 leading-relaxed" id="infoModalContent">
+            </div>
+            <div class="p-4 bg-white border-t text-left">
+                <button onclick="closeInfoModal()" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -1273,6 +1314,9 @@
         function showDashboard(user) {
             loginView.classList.add('hidden');
             appDashboard.classList.remove('hidden');
+            
+            document.getElementById('aiFloatBtn').classList.remove('hidden');
+            
             setTimeout(() => appDashboard.classList.remove('opacity-0'), 50);
             
             const displayName = user.displayName || (user.email ? user.email.split('@')[0] : 'زائر');
@@ -1284,6 +1328,9 @@
         function showLogin() {
             appDashboard.classList.add('hidden', 'opacity-0');
             loginView.classList.remove('hidden');
+            
+            document.getElementById('aiFloatBtn').classList.add('hidden');
+            document.getElementById('globalAIChatWindow').style.display = 'none';
         }
 
         function renderAll() {
@@ -1517,7 +1564,7 @@
                  const rankedProducts = [...products].sort((a, b) => {
                      const soldA = salesCounts[a.name] || 0;
                      const soldB = salesCounts[b.name] || 0;
-                     return soldB - soldA; // Descending order
+                     return soldB - soldA; 
                  });
 
                  topContainer.innerHTML = rankedProducts.slice(0,3).map(p => {
@@ -1818,22 +1865,15 @@
         window.editExpense = (id) => window.openExpenseModal(id);
 
 
-        // ==========================
-        //  AI INTELLIGENCE MODULE (SMART ANALYTICS)
-        // ==========================
+        
         const MISTRAL_API_KEY = "1cEG4yh8geBMECoEFvUP9351nxKcbnjc"; 
 
-        /**
-         * Helper to get comprehensive store context for the AI
-         * This function collects all key metrics to give the AI "vision" over the whole system
-         */
+       
         function getStoreContext() {
-            // 1. Financials
             const totalSales = orders.reduce((s,o) => s + parseFloat(o.amount||0), 0);
             const totalProfits = orders.reduce((s,o) => s + parseFloat(o.profit||0), 0);
             const totalExpenses = expenses.reduce((s,e) => s + parseFloat(e.amount||0), 0);
             
-            // 2. Top Selling Products
             const salesCount = {};
             orders.forEach(o => { salesCount[o.product] = (salesCount[o.product] || 0) + (parseInt(o.quantity) || 1); });
             const topProducts = Object.entries(salesCount)
@@ -1842,10 +1882,8 @@
                 .map(([name, count]) => `${name} (${count} مبيعات)`)
                 .join(", ");
 
-            // 3. Low Stock Alert
             const lowStock = products.filter(p => p.stock < 5).map(p => `${p.name} (باقي ${p.stock})`).join(", ");
 
-            // 4. Expenses Breakdown
             const expenseCats = {};
             expenses.forEach(e => { expenseCats[e.type] = (expenseCats[e.type] || 0) + parseFloat(e.amount); });
             const topExpenses = Object.entries(expenseCats).sort((a,b) => b[1] - a[1]).slice(0,3).map(([k,v]) => `${k}: ${v}`).join(", ");
@@ -1921,7 +1959,6 @@
             const spent = document.getElementById('custModalTotalSpent').innerText;
             const count = document.getElementById('custModalOrdersCount').innerText;
             
-            // Get specific order history for this customer for deeper context
             const customerOrders = orders.filter(o => o.customer === name);
             const boughtProducts = [...new Set(customerOrders.map(o => o.product))].join(", ");
 
@@ -1941,7 +1978,7 @@
         window.analyzeExpensesAI = async () => {
             if(typeof expenses === 'undefined' || expenses.length === 0) return alert("لا توجد مصاريف لتحليلها");
             
-            const context = getStoreContext(); // Use full context to see relation to sales
+            const context = getStoreContext(); 
 
             const prompt = `
                 بصفتك مستشاراً مالياً، انظر إلى ملخص المتجر التالي وركز على المصروفات:
@@ -1980,7 +2017,6 @@
             chatBody.innerHTML += `<div id="${loadingId}" class="msg-bubble msg-ai"><i class="fa-solid fa-spinner animate-spin"></i> جاري التفكير...</div>`;
             chatBody.scrollTop = chatBody.scrollHeight;
 
-            // INTELLIGENT CONTEXT INJECTION
             const storeContext = getStoreContext();
             
             const prompt = `
@@ -2034,7 +2070,7 @@
                         { role: "user", content: prompt }
                     ],
                     temperature: 0.7,
-                    max_tokens: 1000 // Increased for better analysis
+                    max_tokens: 1000 
                 })
             });
 
@@ -2083,6 +2119,91 @@
         if(document.getElementById('reportDay')) {
             document.getElementById('reportDay').valueAsDate = new Date();
         }
+
+        
+        
+        const infoContent = {
+            'privacy': {
+                title: 'سياسة الخصوصية',
+                content: `
+                    <h4 class="font-bold mb-2">مقدمة</h4>
+                    <p class="mb-4">نحن في نظام بيعاتي الذكي نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية والتجارية.</p>
+                    
+                    <h4 class="font-bold mb-2">جمع البيانات</h4>
+                    <p class="mb-4">نحن نقوم بجمع البيانات التي تدخلها في النظام مثل المنتجات، الطلبات، وبيانات العملاء لغرض توفير الخدمة وتحسين تجربتك.</p>
+                    
+                    <h4 class="font-bold mb-2">أمن المعلومات</h4>
+                    <p class="mb-4">نستخدم أحدث التقنيات لتشفير وحماية بياناتك المخزنة على خوادمنا السحابية.</p>
+                    
+                    <h4 class="font-bold mb-2">مشاركة البيانات</h4>
+                    <p class="mb-4">نحن لا نقوم ببيع أو مشاركة بياناتك مع أي طرف ثالث لأغراض تسويقية.</p>
+                `
+            },
+            'terms': {
+                title: 'شروط الاستخدام',
+                content: `
+                    <h4 class="font-bold mb-2">القبول بالشروط</h4>
+                    <p class="mb-4">باستخدامك لنظام بيعاتي، فإنك توافق على الالتزام بهذه الشروط.</p>
+                    
+                    <h4 class="font-bold mb-2">الاستخدام المسموح</h4>
+                    <p class="mb-4">يُسمح باستخدام النظام لإدارة الأعمال التجارية بشكل قانوني. يمنع استخدام النظام لأي أغراض غير مشروعة.</p>
+                    
+                    <h4 class="font-bold mb-2">المسؤولية</h4>
+                    <p class="mb-4">النظام يوفر أدوات للمساعدة في الإدارة، ولكن المسؤولية النهائية عن البيانات والقرارات المالية تقع على عاتق المستخدم.</p>
+                `
+            },
+            'subscribe': {
+             title: 'معلومات عن مطور النظام',
+                content: `
+                    <div class="space-y-4">
+                        <div class="border p-5 rounded-xl bg-white shadow-sm border-indigo-100">
+                            <h4 class="font-bold text-indigo-600 text-lg mb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-user-gear"></i> المطور التقني
+                            </h4>
+                            <p class="text-gray-700 leading-relaxed text-sm mb-4">
+                                هو العقل التقني المسؤول عن تصميم وبناء هذا النظام. يركز المطور على دمج تقنيات الويب الحديثة مع الذكاء الاصطناعي لتوفير حلول برمجية ذكية تخدم أصحاب الأعمال وتسهل الإدارة المالية.
+                            </p>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                                <h5 class="font-bold text-gray-700 text-sm mb-3">تواصل مع المطور:</h5>
+                                <div class="flex flex-wrap gap-3">
+                                    <a href="https://instagram.com/bh.adr" target="_blank" class="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg text-xs font-bold hover:scale-105 transition shadow-sm">
+                                        <i class="fa-brands fa-instagram text-base"></i> Instagram
+                                    </a>
+                                    <a href="https://www.linkedin.com/in/badrfarhan/" target="_blank" class="flex items-center gap-2 bg-[#0077b5] text-white px-4 py-2 rounded-lg text-xs font-bold hover:scale-105 transition shadow-sm">
+                                        <i class="fa-brands fa-linkedin-in text-base"></i> LinkedIn
+                                    </a>
+                                    <a href="https://github.com/" target="_blank" class="flex items-center gap-2 bg-[#24292e] text-white px-4 py-2 rounded-lg text-xs font-bold hover:scale-105 transition shadow-sm">
+                                        <i class="fa-brands fa-github text-base"></i> GitHub
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="bg-indigo-50 p-4 rounded-lg">
+                                <h5 class="font-bold text-indigo-700 text-sm mb-2">الخبرات التقنية:</h5>
+                                <ul class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-indigo-900">
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Full Stack Development</li>
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> AI & Data Analysis</li>
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Cloud Infrastructure</li>
+                                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        window.openInfoModal = (type) => {
+            const data = infoContent[type];
+            if(data) {
+                document.getElementById('infoModalTitle').innerText = data.title;
+                document.getElementById('infoModalContent').innerHTML = data.content;
+                document.getElementById('infoModal').classList.remove('hidden');
+            }
+        };
+
+        window.closeInfoModal = () => document.getElementById('infoModal').classList.add('hidden');
 
     </script>
 </body>
