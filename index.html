@@ -368,12 +368,79 @@
 <!-- ═══════════════════ APP ═══════════════════ -->
 <div id="app-dashboard" class="hidden h-screen flex flex-col overflow-hidden opacity-0 transition-opacity duration-500">
 
-    <!-- Low Stock Warning Bar -->
-    <div id="low-stock-bar" onclick="switchView('products')">
-        <i class="fa-solid fa-triangle-exclamation"></i>
-        <span id="low-stock-text">تحذير: بعض المنتجات وصلت لمخزون منخفض!</span>
-        <span class="mr-auto text-xs font-bold underline">عرض المنتجات</span>
+    <!-- ═══ Notification Bell Panel ═══ -->
+    <div id="notif-panel" class="hidden fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 pointer-events-none">
+        <div class="pointer-events-auto bg-white rounded-2xl shadow-2xl border border-gray-100 w-full max-w-md mx-4 overflow-hidden" style="animation: notifSlideDown 0.4s cubic-bezier(0.34,1.56,0.64,1) both;">
+            <div class="bg-gradient-to-l from-amber-500 to-orange-500 px-5 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-2 text-white font-black text-sm">
+                    <i class="fa-solid fa-bell text-base"></i>
+                    <span>إشعارات المخزون</span>
+                </div>
+                <button onclick="closeNotifPanel()" class="text-white/80 hover:text-white w-7 h-7 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="notif-panel-body" class="p-4 space-y-2 max-h-72 overflow-y-auto"></div>
+            <div class="px-4 pb-4">
+                <button onclick="switchView('products'); closeNotifPanel();" class="w-full bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 font-black text-sm rounded-xl py-2.5 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-box-open"></i> عرض المنتجات
+                </button>
+            </div>
+        </div>
     </div>
+
+    <!-- Low stock hidden bar kept for compat -->
+    <div id="low-stock-bar" style="display:none">
+        <span id="low-stock-text"></span>
+        <span id="low-stock-badge" class="hidden"></span>
+    </div>
+
+    <style>
+        @keyframes notifSlideDown {
+            from { opacity:0; transform: translateY(-20px) scale(0.95); }
+            to   { opacity:1; transform: translateY(0) scale(1); }
+        }
+        @keyframes bellShake {
+            0%,100%{ transform: rotate(0deg); }
+            15%    { transform: rotate(14deg); }
+            30%    { transform: rotate(-12deg); }
+            45%    { transform: rotate(9deg); }
+            60%    { transform: rotate(-6deg); }
+            75%    { transform: rotate(3deg); }
+        }
+        .bell-shake { animation: bellShake 0.7s ease; }
+        #notif-bell-btn {
+            position: relative;
+            width: 40px; height: 40px;
+            background: #f5f5ff;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: #4f46e5; font-size: 1.05rem; cursor: pointer;
+            transition: background 0.2s, transform 0.2s; border: 1.5px solid #e0e7ff;
+            font-family: 'Tajawal', sans-serif;
+        }
+        #notif-bell-btn:hover { background: #ede9fe; transform: scale(1.05); }
+        #notif-bell-badge {
+            position: absolute; top: -5px; right: -5px;
+            background: #ef4444; color: white;
+            min-width: 18px; height: 18px; border-radius: 9px;
+            padding: 0 4px;
+            font-size: 0.62rem; font-weight: 900;
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid #f5f5ff;
+            animation: pulseBadge2 2s ease infinite;
+        }
+        @keyframes pulseBadge2 {
+            0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.55); }
+            50%     { box-shadow: 0 0 0 6px rgba(239,68,68,0); }
+        }
+        .notif-item { border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; font-size: 0.82rem; }
+        .notif-item-out { background:#fee2e2; border:1px solid #fecaca; }
+        .notif-item-low { background:#fef9c3; border:1px solid #fde68a; }
+        .notif-icon { width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.85rem; }
+        .notif-icon-out { background:#fca5a5;color:#991b1b; }
+        .notif-icon-low { background:#fde68a;color:#92400e; }
+    </style>
 
     <div class="flex flex-1 overflow-hidden">
 
@@ -436,6 +503,9 @@
                 <a href="#" onclick="switchView('developer')" id="nav-developer" class="nav-item">
                     <i class="fa-solid fa-code w-5 text-center"></i><span>مطور النظام</span>
                 </a>
+                <a href="#" onclick="switchView('guide')" id="nav-guide" class="nav-item">
+                    <i class="fa-solid fa-book-open w-5 text-center"></i><span>شرح النظام</span>
+                </a>
                 <a href="./privacy_policy" target="_blank" id="nav-privacy" class="nav-item">
                     <i class="fa-solid fa-shield-halved w-5 text-center"></i><span>سياسة الخصوصية</span>
                 </a>
@@ -444,7 +514,6 @@
                 </a>
             </nav>
 
-            <!-- User -->
             <div class="p-4 border-t border-white/10">
                 <div class="flex items-center gap-3">
                     <img src="" id="userAvatar" alt="User" class="w-9 h-9 rounded-full ring-2 ring-white/20">
@@ -459,10 +528,8 @@
             </div>
         </aside>
 
-        <!-- ════ MAIN ════ -->
         <main class="flex-1 flex flex-col overflow-hidden bg-gray-50">
 
-            <!-- Header -->
             <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-5 lg:px-8 shrink-0 gap-3 z-20">
                 <div class="flex items-center gap-4">
                     <button id="sidebarToggle" class="md:hidden text-gray-600 hover:text-indigo-600 p-1.5">
@@ -472,7 +539,6 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <!-- Search -->
                     <div class="hidden md:flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 gap-2 w-72 focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-50 transition">
                         <i class="fa-solid fa-magnifying-glass text-gray-400 text-sm"></i>
                         <input type="text" id="searchInput" placeholder="بحث..." class="bg-transparent outline-none text-sm flex-1 font-medium text-gray-700 placeholder-gray-400">
@@ -484,19 +550,22 @@
                         </select>
                     </div>
 
-                    <!-- Excel Export -->
                     <button onclick="exportToExcel()" class="btn btn-success btn-sm gap-1.5">
                         <i class="fa-solid fa-file-excel"></i>
                         <span class="hidden md:inline">تصدير Excel</span>
                     </button>
 
-                    <!-- AI Insights -->
                     <button onclick="generateDashboardInsights()" class="btn btn-amber btn-sm gap-1.5">
                         <i class="fa-solid fa-wand-magic-sparkles"></i>
                         <span class="hidden md:inline">تحليل ذكي</span>
                     </button>
 
-                    <!-- New Order -->
+                    <!-- Bell Notification Button -->
+                    <button id="notif-bell-btn" onclick="toggleNotifPanel()" title="إشعارات المخزون">
+                        <i class="fa-solid fa-bell" id="notif-bell-icon"></i>
+                        <span id="notif-bell-badge" class="hidden">0</span>
+                    </button>
+
                     <button onclick="openOrderModal()" class="btn btn-primary btn-sm gap-1.5">
                         <i class="fa-solid fa-plus"></i>
                         <span>طلب جديد</span>
@@ -504,13 +573,10 @@
                 </div>
             </header>
 
-            <!-- Content -->
             <div class="flex-1 overflow-y-auto p-5 lg:p-8">
 
-                <!-- ─── DASHBOARD ─── -->
                 <div id="view-dashboard" class="view-section active fade-up">
 
-                    <!-- KPI Cards -->
                     <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
 
                         <div class="kpi-card lg:col-span-1">
@@ -564,7 +630,6 @@
                         </div>
                     </div>
 
-                    <!-- 2nd row: Extra Stats -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                         <div class="mini-metric">
                             <p class="text-xs text-gray-500 font-semibold mb-1">متوسط قيمة الطلب</p>
@@ -584,10 +649,8 @@
                         </div>
                     </div>
 
-                    <!-- Charts Row -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
 
-                        <!-- Sales Chart -->
                         <div class="chart-card lg:col-span-2">
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="font-black text-gray-900">تحليل المبيعات الشهرية</h3>
@@ -599,7 +662,6 @@
                             <div class="relative h-52"><canvas id="salesChart"></canvas></div>
                         </div>
 
-                        <!-- Top Products -->
                         <div class="chart-card">
                             <h3 class="font-black text-gray-900 mb-4">الأكثر مبيعاً</h3>
                             <div class="space-y-3" id="topProductsContainer">
@@ -608,24 +670,20 @@
                         </div>
                     </div>
 
-                    <!-- 3rd row: Status breakdown + Recent orders -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
 
-                        <!-- Order Status Breakdown -->
                         <div class="chart-card">
                             <h3 class="font-black text-gray-900 mb-4">توزيع حالات الطلبات</h3>
                             <div class="relative h-40"><canvas id="statusChart"></canvas></div>
                             <div class="grid grid-cols-3 gap-2 mt-3 text-center" id="statusSummary"></div>
                         </div>
 
-                        <!-- Category Sales Breakdown -->
                         <div class="chart-card lg:col-span-2">
                             <h3 class="font-black text-gray-900 mb-4">المبيعات حسب التصنيف</h3>
                             <div id="categoryBreakdown" class="space-y-3"></div>
                         </div>
                     </div>
 
-                    <!-- Recent Orders Table -->
                     <div class="chart-card overflow-hidden">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="font-black text-gray-900">آخر الطلبات</h3>
@@ -648,7 +706,6 @@
                     </div>
                 </div>
 
-                <!-- ─── PRODUCTS ─── -->
                 <div id="view-products" class="view-section fade-up">
                     <div class="chart-card overflow-hidden">
                         <div class="flex items-center justify-between p-0 mb-4">
@@ -662,7 +719,6 @@
                                 </button>
                             </div>
                         </div>
-                        <!-- Low stock filter -->
                         <div class="flex gap-2 mb-4">
                             <button id="filterAll" onclick="setProductFilter('all')" class="btn btn-primary btn-sm">الكل</button>
                             <button id="filterLow" onclick="setProductFilter('low')" class="btn btn-ghost btn-sm text-amber-600">
@@ -681,7 +737,6 @@
                     </div>
                 </div>
 
-                <!-- ─── ORDERS ─── -->
                 <div id="view-orders" class="view-section fade-up">
                     <div class="chart-card overflow-hidden">
                         <div class="flex items-center justify-between mb-4">
@@ -699,9 +754,7 @@
                     </div>
                 </div>
 
-                <!-- ─── CUSTOMERS ─── -->
                 <div id="view-customers" class="view-section fade-up">
-                    <!-- Customer Stats Bar -->
                     <div class="grid grid-cols-3 gap-4 mb-5">
                         <div class="mini-metric text-center"><p class="text-xs text-gray-500 font-semibold mb-1">إجمالي العملاء</p><p class="text-2xl font-black text-indigo-600" id="custStatTotal">0</p></div>
                         <div class="mini-metric text-center"><p class="text-xs text-gray-500 font-semibold mb-1">أعلى عميل قيمةً</p><p class="text-lg font-black text-amber-600 truncate" id="custStatTop">-</p></div>
@@ -710,7 +763,6 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="customersGrid"></div>
                 </div>
 
-                <!-- ─── EXPENSES ─── -->
                 <div id="view-expenses" class="view-section fade-up">
                     <div class="chart-card overflow-hidden">
                         <div class="flex items-center justify-between mb-4">
@@ -733,7 +785,6 @@
                     </div>
                 </div>
 
-                <!-- ─── REPORTS ─── -->
                 <div id="view-reports" class="view-section fade-up">
                     <div class="max-w-xl mx-auto chart-card">
                         <h3 class="text-xl font-black text-gray-900 mb-5 text-center">التقارير المالية</h3>
@@ -769,7 +820,6 @@
                     </div>
                 </div>
 
-                <!-- ─── SETTINGS ─── -->
                 <div id="view-settings" class="view-section fade-up">
                     <div class="max-w-xl mx-auto chart-card">
                         <h3 class="text-xl font-black text-gray-900 mb-5 border-b pb-4">الإعدادات العامة</h3>
@@ -807,24 +857,16 @@
                     </div>
                 </div>
 
-                <!-- ─── DEVELOPER ─── -->
                 <div id="view-developer" class="view-section fade-up">
                     <div class="max-w-lg mx-auto">
-                        <!-- Modal-style card -->
                         <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-
-                            <!-- Header bar -->
                             <div class="bg-indigo-600 px-6 py-4 flex items-center justify-between">
                                 <h3 class="text-white font-black text-lg">معلومات عن مطور النظام</h3>
                                 <button onclick="switchView('dashboard')" class="text-white/70 hover:text-white w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition">
                                     <i class="fa-solid fa-xmark"></i>
                                 </button>
                             </div>
-
-                            <!-- Body -->
                             <div class="p-6 space-y-5">
-
-                                <!-- Developer info -->
                                 <div class="bg-gray-50 rounded-2xl p-5">
                                     <div class="flex items-center gap-2 mb-3">
                                         <i class="fa-solid fa-gear text-indigo-600"></i>
@@ -834,68 +876,596 @@
                                         هو العقل التقني المسؤول عن تصميم وبناء هذا النظام. يركز المطور على دمج تقنيات الويب الحديثة مع الذكاء الاصطناعي لتوفير حلول برمجية ذكية تخدم أصحاب الأعمال وتسهّل الإدارة المالية.
                                     </p>
                                 </div>
-
-                                <!-- Social Links -->
                                 <div>
                                     <p class="text-right font-black text-gray-700 mb-3">تواصل مع المطور:</p>
                                     <div class="flex gap-3 justify-center flex-wrap">
-                                        <a href="https://github.com" target="_blank"
-                                           class="flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-xl font-black text-sm hover:bg-gray-700 transition shadow">
+                                        <a href="https://github.com" target="_blank" class="flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-xl font-black text-sm hover:bg-gray-700 transition shadow">
                                             <i class="fa-brands fa-github text-base"></i> GitHub
                                         </a>
-                                        <a href="https://linkedin.com" target="_blank"
-                                           class="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl font-black text-sm hover:bg-blue-700 transition shadow">
+                                        <a href="https://linkedin.com" target="_blank" class="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl font-black text-sm hover:bg-blue-700 transition shadow">
                                             <i class="fa-brands fa-linkedin text-base"></i> LinkedIn
                                         </a>
-                                        <a href="https://instagram.com" target="_blank"
-                                           class="flex items-center gap-2 text-white px-5 py-2.5 rounded-xl font-black text-sm hover:opacity-90 transition shadow"
-                                           style="background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)">
+                                        <a href="https://instagram.com" target="_blank" class="flex items-center gap-2 text-white px-5 py-2.5 rounded-xl font-black text-sm hover:opacity-90 transition shadow" style="background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)">
                                             <i class="fa-brands fa-instagram text-base"></i> Instagram
                                         </a>
                                     </div>
                                 </div>
-
-                                <!-- Skills -->
                                 <div class="bg-indigo-50 rounded-2xl p-5">
                                     <p class="text-right font-black text-gray-700 mb-4">الخبرات التقنية:</p>
                                     <div class="grid grid-cols-2 gap-3">
-                                        <div class="flex items-center justify-end gap-2 text-sm text-gray-700 font-semibold">
-                                            Full Stack Development <i class="fa-solid fa-check text-indigo-600 font-black"></i>
-                                        </div>
-                                        <div class="flex items-center justify-end gap-2 text-sm text-gray-700 font-semibold">
-                                            AI & Data Analysis <i class="fa-solid fa-check text-indigo-600 font-black"></i>
-                                        </div>
-                                        <div class="flex items-center justify-end gap-2 text-sm text-gray-700 font-semibold">
-                                            Cloud Infrastructure <i class="fa-solid fa-check text-indigo-600 font-black"></i>
-                                        </div>
-                                        <div class="flex items-center justify-end gap-2 text-sm text-gray-700 font-semibold">
-                                            UI/UX Design <i class="fa-solid fa-check text-indigo-600 font-black"></i>
-                                        </div>
+                                        <div class="flex items-center justify-end gap-2 text-sm text-gray-700 font-semibold">Full Stack Development <i class="fa-solid fa-check text-indigo-600 font-black"></i></div>
+                                        <div class="flex items-center justify-end gap-2 text-sm text-gray-700 font-semibold">AI & Data Analysis <i class="fa-solid fa-check text-indigo-600 font-black"></i></div>
+                                        <div class="flex items-center justify-end gap-2 text-sm text-gray-700 font-semibold">Cloud Infrastructure <i class="fa-solid fa-check text-indigo-600 font-black"></i></div>
+                                        <div class="flex items-center justify-end gap-2 text-sm text-gray-700 font-semibold">UI/UX Design <i class="fa-solid fa-check text-indigo-600 font-black"></i></div>
                                     </div>
                                 </div>
-
-                                <!-- System info row -->
                                 <div class="grid grid-cols-3 gap-3 text-center">
                                     <div class="mini-metric"><p class="text-xs text-gray-400 font-semibold mb-1">الإصدار</p><p class="font-black text-indigo-700">v2.0 Pro</p></div>
                                     <div class="mini-metric"><p class="text-xs text-gray-400 font-semibold mb-1">قاعدة البيانات</p><p class="font-black text-orange-600 text-xs">Firebase</p></div>
                                     <div class="mini-metric"><p class="text-xs text-gray-400 font-semibold mb-1">الذكاء الاصطناعي</p><p class="font-black text-purple-600 text-xs">Mistral AI</p></div>
                                 </div>
-
                             </div>
-
-                            <!-- Footer -->
                             <div class="px-6 pb-5">
-                                <button onclick="switchView('dashboard')" class="btn btn-outline w-full justify-center">
-                                    إغلاق
-                                </button>
+                                <button onclick="switchView('dashboard')" class="btn btn-outline w-full justify-center">إغلاق</button>
                             </div>
-
                         </div>
                         <p class="text-center text-xs text-gray-400 mt-4">© 2025 بيعاتي برو — جميع الحقوق محفوظة</p>
                     </div>
                 </div>
 
-                <!-- ─── PRIVACY ─── -->
+                <!-- ═══════════ شرح النظام ═══════════ -->
+                <div id="view-guide" class="view-section fade-up">
+                    <style>
+                        /* ── Guide Styles ── */
+                        .guide-hero {
+                            background: linear-gradient(135deg, #1e1b4b 0%, #4f46e5 50%, #7c3aed 100%);
+                            border-radius: 24px;
+                            padding: 40px 32px;
+                            position: relative;
+                            overflow: hidden;
+                            margin-bottom: 28px;
+                        }
+                        .guide-hero::before {
+                            content: '';
+                            position: absolute;
+                            top: -60px; left: -60px;
+                            width: 220px; height: 220px;
+                            background: rgba(255,255,255,0.06);
+                            border-radius: 50%;
+                        }
+                        .guide-hero::after {
+                            content: '';
+                            position: absolute;
+                            bottom: -80px; right: -40px;
+                            width: 280px; height: 280px;
+                            background: rgba(255,255,255,0.04);
+                            border-radius: 50%;
+                        }
+                        .guide-hero-icon {
+                            width: 64px; height: 64px;
+                            background: rgba(255,255,255,0.15);
+                            border-radius: 20px;
+                            display: flex; align-items: center; justify-content: center;
+                            font-size: 28px; color: white;
+                            backdrop-filter: blur(10px);
+                            border: 1px solid rgba(255,255,255,0.2);
+                            animation: floatIcon 3s ease-in-out infinite;
+                        }
+                        @keyframes floatIcon {
+                            0%,100% { transform: translateY(0); }
+                            50% { transform: translateY(-6px); }
+                        }
+                        .guide-chips {
+                            display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px;
+                        }
+                        .guide-chip {
+                            background: rgba(255,255,255,0.12);
+                            border: 1px solid rgba(255,255,255,0.2);
+                            color: white; border-radius: 20px;
+                            padding: 4px 14px; font-size: 0.75rem; font-weight: 700;
+                            backdrop-filter: blur(8px);
+                        }
+
+                        /* Accordion */
+                        .guide-accordion {
+                            background: white;
+                            border-radius: 18px;
+                            border: 1.5px solid #eee;
+                            overflow: hidden;
+                            box-shadow: 0 2px 12px rgba(79,70,229,0.06);
+                            transition: box-shadow 0.3s, transform 0.3s;
+                        }
+                        .guide-accordion:hover {
+                            box-shadow: 0 8px 28px rgba(79,70,229,0.12);
+                            transform: translateY(-2px);
+                        }
+                        .guide-accordion.open {
+                            box-shadow: 0 8px 32px rgba(79,70,229,0.15);
+                        }
+
+                        .guide-acc-header {
+                            display: flex; align-items: center; gap: 14px;
+                            padding: 18px 20px; cursor: pointer;
+                            user-select: none;
+                            transition: background 0.2s;
+                        }
+                        .guide-acc-header:hover { background: #fafbff; }
+
+                        .guide-acc-icon {
+                            width: 44px; height: 44px; border-radius: 14px;
+                            display: flex; align-items: center; justify-content: center;
+                            font-size: 1.1rem; flex-shrink: 0;
+                            transition: transform 0.3s;
+                        }
+                        .guide-accordion.open .guide-acc-icon { transform: scale(1.1); }
+
+                        .guide-acc-num {
+                            font-size: 0.68rem; font-weight: 900;
+                            color: #a5b4fc; letter-spacing: 0.5px;
+                        }
+                        .guide-acc-title {
+                            font-size: 0.95rem; font-weight: 800; color: #1e1b4b; flex: 1;
+                        }
+                        .guide-acc-arrow {
+                            width: 28px; height: 28px;
+                            background: #f5f5ff; border-radius: 8px;
+                            display: flex; align-items: center; justify-content: center;
+                            color: #6366f1; font-size: 0.75rem;
+                            transition: transform 0.35s ease, background 0.2s;
+                            flex-shrink: 0;
+                        }
+                        .guide-accordion.open .guide-acc-arrow {
+                            transform: rotate(180deg);
+                            background: #ede9fe;
+                        }
+
+                        .guide-acc-body {
+                            max-height: 0;
+                            overflow: hidden;
+                            transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1),
+                                        padding 0.3s ease, opacity 0.3s ease;
+                            opacity: 0;
+                        }
+                        .guide-accordion.open .guide-acc-body {
+                            max-height: 700px;
+                            opacity: 1;
+                        }
+                        .guide-acc-inner {
+                            padding: 0 20px 20px;
+                            border-top: 1.5px solid #f0f0f8;
+                            padding-top: 16px;
+                        }
+                        .guide-acc-desc {
+                            font-size: 0.85rem; color: #6b7280;
+                            line-height: 1.7; margin-bottom: 14px;
+                            background: #fafbff; border-radius: 12px;
+                            padding: 12px 14px;
+                            border-right: 3px solid #6366f1;
+                        }
+                        .guide-feature-grid {
+                            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+                        }
+                        @media (max-width: 600px) { .guide-feature-grid { grid-template-columns: 1fr; } }
+                        .guide-feature-item {
+                            display: flex; align-items: flex-start; gap: 10px;
+                            background: #f9fafb; border-radius: 12px;
+                            padding: 10px 12px;
+                            border: 1px solid #f0f0f8;
+                            font-size: 0.8rem;
+                            animation: slideIn 0.4s ease both;
+                        }
+                        @keyframes slideIn {
+                            from { opacity:0; transform: translateX(12px); }
+                            to { opacity:1; transform: translateX(0); }
+                        }
+                        .guide-feature-dot {
+                            width: 22px; height: 22px; border-radius: 8px;
+                            display: flex; align-items: center; justify-content: center;
+                            font-size: 0.7rem; flex-shrink: 0; margin-top: 1px;
+                        }
+                        .guide-feature-label { font-weight: 800; color: #1e1b4b; font-size: 0.8rem; }
+                        .guide-feature-text { color: #6b7280; margin-top: 1px; line-height: 1.5; }
+
+                        /* Staggered entrance */
+                        .guide-card-enter {
+                            animation: guideCardIn 0.5s ease both;
+                        }
+                        @keyframes guideCardIn {
+                            from { opacity:0; transform: translateY(20px); }
+                            to { opacity:1; transform: translateY(0); }
+                        }
+                        .guide-card-enter:nth-child(1)  { animation-delay: 0.05s; }
+                        .guide-card-enter:nth-child(2)  { animation-delay: 0.10s; }
+                        .guide-card-enter:nth-child(3)  { animation-delay: 0.15s; }
+                        .guide-card-enter:nth-child(4)  { animation-delay: 0.20s; }
+                        .guide-card-enter:nth-child(5)  { animation-delay: 0.25s; }
+                        .guide-card-enter:nth-child(6)  { animation-delay: 0.30s; }
+                        .guide-card-enter:nth-child(7)  { animation-delay: 0.35s; }
+                        .guide-card-enter:nth-child(8)  { animation-delay: 0.40s; }
+                        .guide-card-enter:nth-child(9)  { animation-delay: 0.45s; }
+                        .guide-card-enter:nth-child(10) { animation-delay: 0.50s; }
+                        .guide-card-enter:nth-child(11) { animation-delay: 0.55s; }
+                        .guide-card-enter:nth-child(12) { animation-delay: 0.60s; }
+                        .guide-card-enter:nth-child(13) { animation-delay: 0.65s; }
+                        .guide-card-enter:nth-child(14) { animation-delay: 0.70s; }
+
+                        /* Pulse badge */
+                        .guide-badge-new {
+                            background: linear-gradient(135deg,#10b981,#059669);
+                            color: white; border-radius: 20px;
+                            padding: 2px 9px; font-size: 0.65rem; font-weight: 800;
+                            animation: pulseBadge 2s ease infinite;
+                        }
+                        @keyframes pulseBadge {
+                            0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
+                            50% { box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+                        }
+                    </style>
+
+                    <div class="max-w-3xl mx-auto">
+
+                        <!-- Hero -->
+                        <div class="guide-hero">
+                            <div style="position:relative;z-index:2;">
+                                <div class="flex items-center gap-4 mb-4">
+                                    <div class="guide-hero-icon"><i class="fa-solid fa-book-open"></i></div>
+                                    <div>
+                                        <div class="text-white font-black text-2xl leading-tight">دليل النظام الشامل</div>
+                                        <div class="text-indigo-200 text-sm mt-0.5">شرح كامل ووافٍ لكل جزئية في بيعاتي برو</div>
+                                    </div>
+                                </div>
+                                <div class="guide-chips">
+                                    <span class="guide-chip"><i class="fa-solid fa-layer-group ml-1"></i>14 قسماً</span>
+                                    <span class="guide-chip"><i class="fa-solid fa-robot ml-1"></i>ذكاء اصطناعي</span>
+                                    <span class="guide-chip"><i class="fa-solid fa-fire ml-1"></i>Firebase</span>
+                                    <span class="guide-chip"><i class="fa-solid fa-mobile-screen ml-1"></i>متجاوب</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Accordion List -->
+                        <div class="space-y-3" id="guideAccordionList">
+
+                            <!-- 1 -->
+                            <div class="guide-accordion guide-card-enter" onclick="toggleGuide(this)">
+                                <div class="guide-acc-header">
+                                    <div class="guide-acc-icon" style="background:#eef2ff;color:#4f46e5"><i class="fa-solid fa-house-chimney"></i></div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="guide-acc-num">القسم ١</div>
+                                        <div class="guide-acc-title">لوحة التحكم</div>
+                                    </div>
+                                    <div class="guide-acc-arrow"><i class="fa-solid fa-chevron-down"></i></div>
+                                </div>
+                                <div class="guide-acc-body">
+                                    <div class="guide-acc-inner">
+                                        <p class="guide-acc-desc">الواجهة الرئيسية للنظام وأول ما يظهر بعد تسجيل الدخول — ملخص شامل لأداء متجرك في لمحة واحدة.</p>
+                                        <div class="guide-feature-grid">
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#eef2ff;color:#4f46e5"><i class="fa-solid fa-chart-simple"></i></div><div><div class="guide-feature-label">بطاقات KPI</div><div class="guide-feature-text">إجمالي المبيعات، الربح، الطلبات، والمخزون لحظياً</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#eef2ff;color:#4f46e5"><i class="fa-solid fa-chart-line"></i></div><div><div class="guide-feature-label">مخطط المبيعات</div><div class="guide-feature-text">رسم بياني شهري أو أسبوعي تفاعلي قابل للتبديل</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#eef2ff;color:#4f46e5"><i class="fa-solid fa-chart-pie"></i></div><div><div class="guide-feature-label">توزيع الطلبات</div><div class="guide-feature-text">مخطط دائري: مكتملة / معلقة / ملغاة</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#eef2ff;color:#4f46e5"><i class="fa-solid fa-trophy"></i></div><div><div class="guide-feature-label">أفضل المنتجات</div><div class="guide-feature-text">قائمة أكثر المنتجات مبيعاً مع شريط تقدم بصري</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#eef2ff;color:#4f46e5"><i class="fa-solid fa-list-check"></i></div><div><div class="guide-feature-label">آخر الطلبات</div><div class="guide-feature-text">جدول بأحدث الطلبات مع إكمال سريع وتعديل مباشر</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fef9c3;color:#92400e"><i class="fa-solid fa-triangle-exclamation"></i></div><div><div class="guide-feature-label">تحذير المخزون</div><div class="guide-feature-text">شريط أصفر يظهر تلقائياً عند الوصول للحد الأدنى</div></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2 -->
+                            <div class="guide-accordion guide-card-enter" onclick="toggleGuide(this)">
+                                <div class="guide-acc-header">
+                                    <div class="guide-acc-icon" style="background:#dcfce7;color:#16a34a"><i class="fa-solid fa-box-open"></i></div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="guide-acc-num">القسم ٢</div>
+                                        <div class="guide-acc-title">المنتجات</div>
+                                    </div>
+                                    <span class="guide-badge-new ml-2">جديد</span>
+                                    <div class="guide-acc-arrow"><i class="fa-solid fa-chevron-down"></i></div>
+                                </div>
+                                <div class="guide-acc-body">
+                                    <div class="guide-acc-inner">
+                                        <p class="guide-acc-desc">كتالوج كامل لمنتجاتك — إضافة وتعديل وحذف مع صور ووصف احترافي بالذكاء الاصطناعي.</p>
+                                        <div class="guide-feature-grid">
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#dcfce7;color:#16a34a"><i class="fa-solid fa-image"></i></div><div><div class="guide-feature-label">صورة المنتج</div><div class="guide-feature-text">رفع PNG/JPG (حد 2MB) تظهر مصغّرة في الجدول</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#dcfce7;color:#16a34a"><i class="fa-solid fa-magic"></i></div><div><div class="guide-feature-label">وصف بالذكاء الاصطناعي</div><div class="guide-feature-text">زر يولّد وصفاً احترافياً للمنتج تلقائياً</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#dcfce7;color:#16a34a"><i class="fa-solid fa-filter"></i></div><div><div class="guide-feature-label">تصفية المنتجات</div><div class="guide-feature-text">عرض الكل / المنخفضة / المنتهية</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#dcfce7;color:#16a34a"><i class="fa-solid fa-file-excel"></i></div><div><div class="guide-feature-label">استيراد / تصدير Excel</div><div class="guide-feature-text">رفع ملف Excel لاستيراد منتجات دفعة واحدة</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#dcfce7;color:#16a34a"><i class="fa-solid fa-calculator"></i></div><div><div class="guide-feature-label">حساب الربح</div><div class="guide-feature-text">يُحسب تلقائياً: سعر البيع − سعر التكلفة</div></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3 -->
+                            <div class="guide-accordion guide-card-enter" onclick="toggleGuide(this)">
+                                <div class="guide-acc-header">
+                                    <div class="guide-acc-icon" style="background:#dbeafe;color:#1d4ed8"><i class="fa-solid fa-cart-shopping"></i></div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="guide-acc-num">القسم ٣</div>
+                                        <div class="guide-acc-title">الطلبات</div>
+                                    </div>
+                                    <div class="guide-acc-arrow"><i class="fa-solid fa-chevron-down"></i></div>
+                                </div>
+                                <div class="guide-acc-body">
+                                    <div class="guide-acc-inner">
+                                        <p class="guide-acc-desc">تسجيل عمليات البيع وربطها بالعملاء والمنتجات تلقائياً مع تتبع كامل لكل طلب.</p>
+                                        <div class="guide-feature-grid">
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#dbeafe;color:#1d4ed8"><i class="fa-solid fa-plus"></i></div><div><div class="guide-feature-label">إضافة طلب</div><div class="guide-feature-text">اختر المنتج والكمية — المبلغ يُحسب تلقائياً</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#dbeafe;color:#1d4ed8"><i class="fa-solid fa-warehouse"></i></div><div><div class="guide-feature-label">خصم المخزون</div><div class="guide-feature-text">يُخصم من المخزون فوراً عند تسجيل الطلب</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#dbeafe;color:#1d4ed8"><i class="fa-solid fa-circle-check"></i></div><div><div class="guide-feature-label">إكمال سريع</div><div class="guide-feature-text">تغيير الحالة لمكتمل بنقرة واحدة</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#dcfce7;color:#16a34a"><i class="fa-brands fa-whatsapp"></i></div><div><div class="guide-feature-label">إرسال واتساب</div><div class="guide-feature-text">ملخص الطلب يُرسل للعميل برسالة جاهزة</div></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 4 -->
+                            <div class="guide-accordion guide-card-enter" onclick="toggleGuide(this)">
+                                <div class="guide-acc-header">
+                                    <div class="guide-acc-icon" style="background:#ede9fe;color:#7c3aed"><i class="fa-solid fa-users"></i></div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="guide-acc-num">القسم ٤</div>
+                                        <div class="guide-acc-title">العملاء</div>
+                                    </div>
+                                    <div class="guide-acc-arrow"><i class="fa-solid fa-chevron-down"></i></div>
+                                </div>
+                                <div class="guide-acc-body">
+                                    <div class="guide-acc-inner">
+                                        <p class="guide-acc-desc">بيانات العملاء تُجمَّع تلقائياً من الطلبات — لا حاجة لإدخال يدوي.</p>
+                                        <div class="guide-feature-grid">
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#ede9fe;color:#7c3aed"><i class="fa-solid fa-id-card"></i></div><div><div class="guide-feature-label">بطاقة العميل</div><div class="guide-feature-text">الاسم، البريد، الهاتف، الطلبات، وإجمالي الإنفاق</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#ede9fe;color:#7c3aed"><i class="fa-solid fa-clock-rotate-left"></i></div><div><div class="guide-feature-label">سجل الطلبات</div><div class="guide-feature-text">اضغط على العميل لرؤية كل طلباته</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#ede9fe;color:#7c3aed"><i class="fa-solid fa-brain"></i></div><div><div class="guide-feature-label">تحليل استراتيجي بالذكاء الاصطناعي</div><div class="guide-feature-text">توصيات لزيادة المبيعات من هذا العميل</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#ede9fe;color:#7c3aed"><i class="fa-solid fa-chart-bar"></i></div><div><div class="guide-feature-label">إحصائيات سريعة</div><div class="guide-feature-text">أعلى عميل قيمةً، المتوسط، إجمالي العملاء</div></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 5 -->
+                            <div class="guide-accordion guide-card-enter" onclick="toggleGuide(this)">
+                                <div class="guide-acc-header">
+                                    <div class="guide-acc-icon" style="background:#fee2e2;color:#dc2626"><i class="fa-solid fa-receipt"></i></div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="guide-acc-num">القسم ٥</div>
+                                        <div class="guide-acc-title">المصروفات</div>
+                                    </div>
+                                    <div class="guide-acc-arrow"><i class="fa-solid fa-chevron-down"></i></div>
+                                </div>
+                                <div class="guide-acc-body">
+                                    <div class="guide-acc-inner">
+                                        <p class="guide-acc-desc">تتبّع كل مصروفات عملك للحصول على صافي الأرباح الحقيقية.</p>
+                                        <div class="guide-feature-grid">
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fee2e2;color:#dc2626"><i class="fa-solid fa-tags"></i></div><div><div class="guide-feature-label">أنواع المصروفات</div><div class="guide-feature-text">إيجار، رواتب، كهرباء، بضاعة، تسويق، أخرى</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fee2e2;color:#dc2626"><i class="fa-solid fa-robot"></i></div><div><div class="guide-feature-label">تحليل ذكي</div><div class="guide-feature-text">الذكاء الاصطناعي يُوصي بطرق لتقليل التكاليف</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fee2e2;color:#dc2626"><i class="fa-solid fa-minus-circle"></i></div><div><div class="guide-feature-label">تأثير على الربح</div><div class="guide-feature-text">تُخصم تلقائياً من المبيعات في حساب الربح الصافي</div></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 6 -->
+                            <div class="guide-accordion guide-card-enter" onclick="toggleGuide(this)">
+                                <div class="guide-acc-header">
+                                    <div class="guide-acc-icon" style="background:#fef9c3;color:#b45309"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="guide-acc-num">القسم ٦</div>
+                                        <div class="guide-acc-title">التقارير</div>
+                                    </div>
+                                    <div class="guide-acc-arrow"><i class="fa-solid fa-chevron-down"></i></div>
+                                </div>
+                                <div class="guide-acc-body">
+                                    <div class="guide-acc-inner">
+                                        <p class="guide-acc-desc">تقارير مالية احترافية لأي فترة زمنية — قابلة للطباعة والتصدير.</p>
+                                        <div class="guide-feature-grid">
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fef9c3;color:#b45309"><i class="fa-solid fa-calendar-day"></i></div><div><div class="guide-feature-label">يوم محدد</div><div class="guide-feature-text">تقرير مفصّل ليوم بعينه</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fef9c3;color:#b45309"><i class="fa-solid fa-calendar-range"></i></div><div><div class="guide-feature-label">فترة زمنية</div><div class="guide-feature-text">من تاريخ إلى تاريخ تحددهما</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fef9c3;color:#b45309"><i class="fa-solid fa-file-pdf"></i></div><div><div class="guide-feature-label">تصدير PDF</div><div class="guide-feature-text">تقرير جاهز للطباعة والمشاركة</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#dcfce7;color:#16a34a"><i class="fa-solid fa-file-excel"></i></div><div><div class="guide-feature-label">تصدير Excel</div><div class="guide-feature-text">بيانات كاملة للتحليل الإضافي</div></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 7 -->
+                            <div class="guide-accordion guide-card-enter" onclick="toggleGuide(this)">
+                                <div class="guide-acc-header">
+                                    <div class="guide-acc-icon" style="background:#ccfbf1;color:#0f766e"><i class="fa-solid fa-file-invoice"></i></div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="guide-acc-num">القسم ٧</div>
+                                        <div class="guide-acc-title">الفواتير</div>
+                                    </div>
+                                    <div class="guide-acc-arrow"><i class="fa-solid fa-chevron-down"></i></div>
+                                </div>
+                                <div class="guide-acc-body">
+                                    <div class="guide-acc-inner">
+                                        <p class="guide-acc-desc">إنشاء فواتير احترافية في لحظات وطباعتها أو إرسالها للعملاء.</p>
+                                        <div class="guide-feature-grid">
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#ccfbf1;color:#0f766e"><i class="fa-solid fa-wand-magic-sparkles"></i></div><div><div class="guide-feature-label">إنشاء فاتورة</div><div class="guide-feature-text">عميل + منتج + كمية + خصم اختياري</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#ccfbf1;color:#0f766e"><i class="fa-solid fa-calculator"></i></div><div><div class="guide-feature-label">حساب تلقائي</div><div class="guide-feature-text">الإجمالي يُحسب لحظياً مع الخصم</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#ccfbf1;color:#0f766e"><i class="fa-solid fa-print"></i></div><div><div class="guide-feature-label">طباعة PDF</div><div class="guide-feature-text">فاتورة باسم المتجر وبيانات العميل</div></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 8 -->
+                            <div class="guide-accordion guide-card-enter" onclick="toggleGuide(this)">
+                                <div class="guide-acc-header">
+                                    <div class="guide-acc-icon" style="background:#fce7f3;color:#be185d"><i class="fa-solid fa-bullseye"></i></div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="guide-acc-num">القسم ٨</div>
+                                        <div class="guide-acc-title">أهداف المبيعات</div>
+                                    </div>
+                                    <div class="guide-acc-arrow"><i class="fa-solid fa-chevron-down"></i></div>
+                                </div>
+                                <div class="guide-acc-body">
+                                    <div class="guide-acc-inner">
+                                        <p class="guide-acc-desc">ضع أهدافاً محددة وتابع تقدم الإنجاز بشكل مرئي في الوقت الفعلي.</p>
+                                        <div class="guide-feature-grid">
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fce7f3;color:#be185d"><i class="fa-solid fa-list-ol"></i></div><div><div class="guide-feature-label">أنواع الأهداف</div><div class="guide-feature-text">مبيعات / طلبات / أرباح / عملاء</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fce7f3;color:#be185d"><i class="fa-solid fa-calendar"></i></div><div><div class="guide-feature-label">الفترة الزمنية</div><div class="guide-feature-text">شهري أو سنوي مع تاريخ بداية ونهاية</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fce7f3;color:#be185d"><i class="fa-solid fa-bars-progress"></i></div><div><div class="guide-feature-label">شريط التقدم</div><div class="guide-feature-text">نسبة الإنجاز الفعلية مقارنةً بالهدف</div></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 9 -->
+                            <div class="guide-accordion guide-card-enter" onclick="toggleGuide(this)">
+                                <div class="guide-acc-header">
+                                    <div class="guide-acc-icon" style="background:#ffedd5;color:#c2410c"><i class="fa-solid fa-tags"></i></div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="guide-acc-num">القسم ٩</div>
+                                        <div class="guide-acc-title">الخصومات والكوبونات</div>
+                                    </div>
+                                    <div class="guide-acc-arrow"><i class="fa-solid fa-chevron-down"></i></div>
+                                </div>
+                                <div class="guide-acc-body">
+                                    <div class="guide-acc-inner">
+                                        <p class="guide-acc-desc">أنشئ كوبونات خصم لحملاتك التسويقية ومكافأة العملاء المميزين.</p>
+                                        <div class="guide-feature-grid">
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#ffedd5;color:#c2410c"><i class="fa-solid fa-wand-sparkles"></i></div><div><div class="guide-feature-label">توليد تلقائي</div><div class="guide-feature-text">كود فريد عشوائي بضغطة واحدة</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#ffedd5;color:#c2410c"><i class="fa-solid fa-percent"></i></div><div><div class="guide-feature-label">نوع الخصم</div><div class="guide-feature-text">نسبة مئوية % أو مبلغ ثابت</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#ffedd5;color:#c2410c"><i class="fa-solid fa-hashtag"></i></div><div><div class="guide-feature-label">حد الاستخدام</div><div class="guide-feature-text">تحديد عدد مرات الاستخدام</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#ffedd5;color:#c2410c"><i class="fa-solid fa-calendar-xmark"></i></div><div><div class="guide-feature-label">تاريخ الانتهاء</div><div class="guide-feature-text">صلاحية الكوبون تنتهي تلقائياً</div></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 10 -->
+                            <div class="guide-accordion guide-card-enter" onclick="toggleGuide(this)">
+                                <div class="guide-acc-header">
+                                    <div class="guide-acc-icon" style="background:#eef2ff;color:#3730a3"><i class="fa-solid fa-chart-line"></i></div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="guide-acc-num">القسم ١٠</div>
+                                        <div class="guide-acc-title">الإحصائيات المتقدمة</div>
+                                    </div>
+                                    <div class="guide-acc-arrow"><i class="fa-solid fa-chevron-down"></i></div>
+                                </div>
+                                <div class="guide-acc-body">
+                                    <div class="guide-acc-inner">
+                                        <p class="guide-acc-desc">تحليلات عميقة لفهم أداء متجرك واتخاذ قرارات مبنية على بيانات حقيقية.</p>
+                                        <div class="guide-feature-grid">
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#eef2ff;color:#3730a3"><i class="fa-solid fa-layer-group"></i></div><div><div class="guide-feature-label">توزيع حسب التصنيف</div><div class="guide-feature-text">نسبة كل فئة منتجات من إجمالي المبيعات</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#eef2ff;color:#3730a3"><i class="fa-solid fa-robot"></i></div><div><div class="guide-feature-label">تحليل بالذكاء الاصطناعي</div><div class="guide-feature-text">تقرير تفصيلي مع توصيات للتحسين</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#eef2ff;color:#3730a3"><i class="fa-solid fa-arrow-trend-up"></i></div><div><div class="guide-feature-label">مؤشرات النمو</div><div class="guide-feature-text">مقارنة الأداء بالفترات السابقة</div></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 11 -->
+                            <div class="guide-accordion guide-card-enter" onclick="toggleGuide(this)">
+                                <div class="guide-acc-header">
+                                    <div class="guide-acc-icon" style="background:#fee2e2;color:#991b1b"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="guide-acc-num">القسم ١١</div>
+                                        <div class="guide-acc-title">الديون والمدفوعات</div>
+                                    </div>
+                                    <div class="guide-acc-arrow"><i class="fa-solid fa-chevron-down"></i></div>
+                                </div>
+                                <div class="guide-acc-body">
+                                    <div class="guide-acc-inner">
+                                        <p class="guide-acc-desc">تتبّع الديون المستحقة وسجّل الدفعات الجزئية والكاملة بدقة.</p>
+                                        <div class="guide-feature-grid">
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fee2e2;color:#991b1b"><i class="fa-solid fa-plus"></i></div><div><div class="guide-feature-label">إضافة دين</div><div class="guide-feature-text">العميل، الوصف، المبلغ الكلي، والمدفوع</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#dcfce7;color:#166534"><i class="fa-solid fa-money-bill-wave"></i></div><div><div class="guide-feature-label">تسجيل دفعة</div><div class="guide-feature-text">دفعات جزئية تراكمية مع ملاحظة لكل دفعة</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fee2e2;color:#991b1b"><i class="fa-solid fa-circle-half-stroke"></i></div><div><div class="guide-feature-label">الحالات</div><div class="guide-feature-text">مسدَّد ✅ / جزئي 🔶 / غير مسدَّد 🔴</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fee2e2;color:#991b1b"><i class="fa-solid fa-calendar-check"></i></div><div><div class="guide-feature-label">تاريخ الاستحقاق</div><div class="guide-feature-text">تتبّع الموعد النهائي لتحصيل كل دين</div></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 12 -->
+                            <div class="guide-accordion guide-card-enter" onclick="toggleGuide(this)">
+                                <div class="guide-acc-header">
+                                    <div class="guide-acc-icon" style="background:#ede9fe;color:#6d28d9"><i class="fa-solid fa-robot"></i></div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="guide-acc-num">القسم ١٢</div>
+                                        <div class="guide-acc-title">المساعد الذكي</div>
+                                    </div>
+                                    <div class="guide-acc-arrow"><i class="fa-solid fa-chevron-down"></i></div>
+                                </div>
+                                <div class="guide-acc-body">
+                                    <div class="guide-acc-inner">
+                                        <p class="guide-acc-desc">مساعد AI مدمج يعرف بيانات متجرك ويجيب على أسئلتك التجارية فوراً.</p>
+                                        <div class="guide-feature-grid">
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#ede9fe;color:#6d28d9"><i class="fa-solid fa-circle-nodes"></i></div><div><div class="guide-feature-label">الوصول</div><div class="guide-feature-text">زر الروبوت في الزاوية السفلية اليسرى</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#ede9fe;color:#6d28d9"><i class="fa-solid fa-database"></i></div><div><div class="guide-feature-label">يعرف بياناتك</div><div class="guide-feature-text">مبيعات، مخزون، عملاء، مصروفات — لحظياً</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#ede9fe;color:#6d28d9"><i class="fa-solid fa-comment-dots"></i></div><div><div class="guide-feature-label">أمثلة</div><div class="guide-feature-text">"أكثر منتج مبيعاً؟" — "كم ربحي هذا الشهر؟"</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#ede9fe;color:#6d28d9"><i class="fa-solid fa-microchip"></i></div><div><div class="guide-feature-label">المحرك</div><div class="guide-feature-text">Mistral AI عبر API بسرعة ودقة</div></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 13 -->
+                            <div class="guide-accordion guide-card-enter" onclick="toggleGuide(this)">
+                                <div class="guide-acc-header">
+                                    <div class="guide-acc-icon" style="background:#dcfce7;color:#15803d"><i class="fa-solid fa-gear"></i></div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="guide-acc-num">القسم ١٣</div>
+                                        <div class="guide-acc-title">الإعدادات</div>
+                                    </div>
+                                    <div class="guide-acc-arrow"><i class="fa-solid fa-chevron-down"></i></div>
+                                </div>
+                                <div class="guide-acc-body">
+                                    <div class="guide-acc-inner">
+                                        <p class="guide-acc-desc">تخصيص كامل للنظام — اسم المتجر، العملة، وحدود التنبيه.</p>
+                                        <div class="guide-feature-grid">
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#dcfce7;color:#15803d"><i class="fa-solid fa-store"></i></div><div><div class="guide-feature-label">اسم المتجر</div><div class="guide-feature-text">يظهر في الشريط الجانبي، الفواتير، وواتساب</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#dcfce7;color:#15803d"><i class="fa-solid fa-coins"></i></div><div><div class="guide-feature-label">العملة</div><div class="guide-feature-text">JOD / USD / SYP</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fef9c3;color:#92400e"><i class="fa-solid fa-bell"></i></div><div><div class="guide-feature-label">حد تنبيه المخزون</div><div class="guide-feature-text">الكمية التي يظهر عندها التحذير</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fee2e2;color:#991b1b"><i class="fa-solid fa-trash-can"></i></div><div><div class="guide-feature-label">تصفير النظام</div><div class="guide-feature-text">حذف جميع البيانات — لا يمكن التراجع</div></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 14 -->
+                            <div class="guide-accordion guide-card-enter" onclick="toggleGuide(this)">
+                                <div class="guide-acc-header">
+                                    <div class="guide-acc-icon" style="background:#f3f4f6;color:#374151"><i class="fa-solid fa-database"></i></div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="guide-acc-num">القسم ١٤</div>
+                                        <div class="guide-acc-title">البنية التقنية</div>
+                                    </div>
+                                    <div class="guide-acc-arrow"><i class="fa-solid fa-chevron-down"></i></div>
+                                </div>
+                                <div class="guide-acc-body">
+                                    <div class="guide-acc-inner">
+                                        <p class="guide-acc-desc">التقنيات الحديثة التي يعتمد عليها النظام لضمان الأداء والأمان.</p>
+                                        <div class="guide-feature-grid">
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fff7ed;color:#c2410c"><i class="fa-solid fa-fire-flame-curved"></i></div><div><div class="guide-feature-label">Firebase Auth</div><div class="guide-feature-text">تسجيل دخول آمن مع دعم وضع الزائر</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fff7ed;color:#c2410c"><i class="fa-solid fa-cloud"></i></div><div><div class="guide-feature-label">Firestore</div><div class="guide-feature-text">قاعدة بيانات سحابية فورية متزامنة</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#ede9fe;color:#6d28d9"><i class="fa-solid fa-microchip"></i></div><div><div class="guide-feature-label">Mistral AI</div><div class="guide-feature-text">محرك الذكاء الاصطناعي للتحليل والتوصيات</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#dbeafe;color:#1d4ed8"><i class="fa-solid fa-chart-area"></i></div><div><div class="guide-feature-label">Chart.js</div><div class="guide-feature-text">رسوم بيانية تفاعلية احترافية</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#dcfce7;color:#15803d"><i class="fa-solid fa-table"></i></div><div><div class="guide-feature-label">SheetJS</div><div class="guide-feature-text">استيراد وتصدير ملفات Excel</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#eef2ff;color:#4f46e5"><i class="fa-solid fa-palette"></i></div><div><div class="guide-feature-label">Tailwind CSS</div><div class="guide-feature-text">تصميم متجاوب على جميع الأجهزة</div></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div><!-- end accordion list -->
+
+                        <p class="text-center text-xs text-gray-400 mt-6 mb-4">© 2025 بيعاتي برو — جميع الحقوق محفوظة</p>
+                    </div>
+
+                    <script>
+                        function toggleGuide(el) {
+                            const isOpen = el.classList.contains('open');
+                            // Close all
+                            document.querySelectorAll('.guide-accordion').forEach(a => a.classList.remove('open'));
+                            // Open clicked if it was closed
+                            if (!isOpen) el.classList.add('open');
+                        }
+                    </script>
+                </div>
+
                 <div id="view-privacy" class="view-section fade-up">
                     <div class="max-w-2xl mx-auto chart-card">
                         <div class="flex items-center gap-3 mb-6 pb-4 border-b">
@@ -912,7 +1482,6 @@
                     </div>
                 </div>
 
-                <!-- ─── TERMS ─── -->
                 <div id="view-terms" class="view-section fade-up">
                     <div class="max-w-2xl mx-auto chart-card">
                         <div class="flex items-center gap-3 mb-6 pb-4 border-b">
@@ -931,7 +1500,6 @@
                 </div>
 
 
-                <!-- ─── INVOICES ─── -->
                 <div id="view-invoices" class="view-section fade-up">
                     <div class="chart-card overflow-hidden">
                         <div class="flex items-center justify-between mb-5">
@@ -943,7 +1511,6 @@
                                 <i class="fa-solid fa-plus"></i> فاتورة جديدة
                             </button>
                         </div>
-                        <!-- Invoice builder -->
                         <div id="invoicesList" class="space-y-3">
                             <div class="text-center py-12 text-gray-400">
                                 <i class="fa-solid fa-file-invoice text-5xl mb-3 block opacity-20"></i>
@@ -954,10 +1521,8 @@
                     </div>
                 </div>
 
-                <!-- ─── GOALS ─── -->
                 <div id="view-goals" class="view-section fade-up">
                     <div class="space-y-5">
-                        <!-- Header -->
                         <div class="chart-card">
                             <div class="flex items-center justify-between mb-4">
                                 <div>
@@ -968,18 +1533,15 @@
                                     <i class="fa-solid fa-plus"></i> هدف جديد
                                 </button>
                             </div>
-                            <!-- Period selector -->
                             <div class="flex gap-2">
                                 <button onclick="setGoalPeriod('monthly')" id="goalBtn-monthly" class="btn btn-primary btn-sm">شهري</button>
                                 <button onclick="setGoalPeriod('yearly')" id="goalBtn-yearly" class="btn btn-ghost btn-sm">سنوي</button>
                             </div>
                         </div>
-                        <!-- Goals list -->
                         <div id="goalsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                     </div>
                 </div>
 
-                <!-- ─── DISCOUNTS ─── -->
                 <div id="view-discounts" class="view-section fade-up">
                     <div class="space-y-5">
                         <div class="chart-card">
@@ -992,13 +1554,11 @@
                                     <i class="fa-solid fa-plus"></i> كوبون جديد
                                 </button>
                             </div>
-                            <!-- Stats row -->
                             <div class="grid grid-cols-3 gap-4 mb-5">
                                 <div class="mini-metric text-center"><p class="text-xs text-gray-400 mb-1">إجمالي الكوبونات</p><p class="text-2xl font-black text-indigo-600" id="totalCoupons">0</p></div>
                                 <div class="mini-metric text-center"><p class="text-xs text-gray-400 mb-1">نشطة</p><p class="text-2xl font-black text-green-600" id="activeCoupons">0</p></div>
                                 <div class="mini-metric text-center"><p class="text-xs text-gray-400 mb-1">إجمالي الخصم المُمنح</p><p class="text-2xl font-black text-red-500" id="totalDiscountGiven">0</p></div>
                             </div>
-                            <!-- Coupons table -->
                             <div class="overflow-x-auto">
                                 <table class="pro-table">
                                     <thead><tr><th>الكود</th><th>النوع</th><th>القيمة</th><th>عدد الاستخدامات</th><th>الحد الأقصى</th><th>تاريخ الانتهاء</th><th>الحالة</th><th>إجراء</th></tr></thead>
@@ -1010,10 +1570,8 @@
                 </div>
 
 
-                <!-- ─── ADVANCED ANALYTICS ─── -->
                 <div id="view-analytics" class="view-section fade-up">
                     <div class="space-y-5">
-                        <!-- Month comparison -->
                         <div class="chart-card">
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="font-black text-gray-900 text-lg">📊 مقارنة الأداء الشهري</h3>
@@ -1023,12 +1581,10 @@
                         </div>
 
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                            <!-- Best day -->
                             <div class="chart-card">
                                 <h3 class="font-black text-gray-900 mb-4">🏆 أفضل أيام المبيعات</h3>
                                 <div id="bestDaysList" class="space-y-2"></div>
                             </div>
-                            <!-- Heatmap -->
                             <div class="chart-card">
                                 <h3 class="font-black text-gray-900 mb-4">🗓️ خريطة نشاط المبيعات</h3>
                                 <div id="salesHeatmap" class="grid gap-1" style="grid-template-columns: repeat(7, 1fr)"></div>
@@ -1046,7 +1602,6 @@
                             </div>
                         </div>
 
-                        <!-- Growth metrics -->
                         <div class="chart-card">
                             <h3 class="font-black text-gray-900 mb-4">📈 مؤشرات النمو</h3>
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="growthMetrics"></div>
@@ -1054,10 +1609,8 @@
                     </div>
                 </div>
 
-                <!-- ─── DEBTS & PAYMENTS ─── -->
                 <div id="view-debts" class="view-section fade-up">
                     <div class="space-y-5">
-                        <!-- Summary -->
                         <div class="grid grid-cols-3 gap-4">
                             <div class="chart-card text-center border-r-4 border-red-400">
                                 <p class="text-xs text-gray-400 font-semibold mb-1">إجمالي الديون</p>
@@ -1090,13 +1643,12 @@
                     </div>
                 </div>
 
-            </div><!-- /content -->
-        </main><!-- /main -->
-    </div><!-- /flex -->
-</div><!-- /app -->
+            </div>
+        </main>
+    </div>
+</div>
 
 
-<!-- Invoice Modal -->
 <div id="invoiceModal" class="modal-overlay hidden" onclick="handleModalClick(event,'invoiceModal',closeInvoiceModal)">
     <div class="modal-box max-w-2xl" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between mb-5">
@@ -1134,7 +1686,6 @@
     </div>
 </div>
 
-<!-- Goal Modal -->
 <div id="goalModal" class="modal-overlay hidden" onclick="handleModalClick(event,'goalModal',closeGoalModal)">
     <div class="modal-box" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between mb-5">
@@ -1171,7 +1722,6 @@
     </div>
 </div>
 
-<!-- Discount Modal -->
 <div id="discountModal" class="modal-overlay hidden" onclick="handleModalClick(event,'discountModal',closeDiscountModal)">
     <div class="modal-box" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between mb-5">
@@ -1204,7 +1754,6 @@
 </div>
 
 
-<!-- Debt Modal -->
 <div id="debtModal" class="modal-overlay hidden" onclick="handleModalClick(event,'debtModal',closeDebtModal)">
     <div class="modal-box" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between mb-5">
@@ -1256,7 +1805,6 @@
     </div>
 </div>
 
-<!-- Pay Debt Modal -->
 <div id="payDebtModal" class="modal-overlay hidden" onclick="handleModalClick(event,'payDebtModal',closePayDebtModal)">
     <div class="modal-box max-w-sm" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between mb-5">
@@ -1284,14 +1832,12 @@
     </div>
 </div>
 
-<!-- Import Excel Modal -->
 <div id="importModal" class="modal-overlay hidden" onclick="handleModalClick(event,'importModal',closeImportModal)">
     <div class="modal-box" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between mb-5">
             <h3 class="text-lg font-black">📦 استيراد منتجات من Excel</h3>
             <button onclick="closeImportModal()" class="text-gray-400 hover:text-red-500 w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <!-- Template download -->
         <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-4">
             <p class="font-bold text-indigo-800 text-sm mb-2">📋 تنسيق الملف المطلوب:</p>
             <p class="text-xs text-indigo-600 mb-3">يجب أن يحتوي الملف على الأعمدة التالية بالترتيب:</p>
@@ -1307,14 +1853,12 @@
                 <i class="fa-solid fa-download"></i> تحميل نموذج Excel فارغ
             </button>
         </div>
-        <!-- Upload zone -->
         <div id="importDropZone" class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition" onclick="document.getElementById('importFileInput').click()">
             <i class="fa-solid fa-file-excel text-4xl text-green-500 mb-3 block"></i>
             <p class="font-bold text-gray-700">اضغط لرفع ملف Excel</p>
             <p class="text-xs text-gray-400 mt-1">يدعم .xlsx و .xls</p>
             <input type="file" id="importFileInput" accept=".xlsx,.xls" class="hidden" onchange="handleImportFile(event)">
         </div>
-        <!-- Preview -->
         <div id="importPreview" class="hidden mt-4">
             <div class="flex items-center justify-between mb-2">
                 <p class="font-bold text-gray-700 text-sm">معاينة البيانات:</p>
@@ -1330,7 +1874,6 @@
     </div>
 </div>
 
-<!-- WhatsApp Modal -->
 <div id="whatsappModal" class="modal-overlay hidden" onclick="handleModalClick(event,'whatsappModal',closeWhatsappModal)">
     <div class="modal-box max-w-sm" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between mb-5">
@@ -1355,10 +1898,8 @@
     </div>
 </div>
 
-<!-- Sidebar Overlay -->
 <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-70 hidden md:hidden" onclick="closeSidebar()"></div>
 
-<!-- ════ AI FAB & Chat ════ -->
 <div class="ai-fab" onclick="toggleAIChat()">
     <div class="pulse-ring"></div>
     <i class="fa-solid fa-robot"></i>
@@ -1383,9 +1924,7 @@
     </div>
 </div>
 
-<!-- ════ MODALS ════ -->
 
-<!-- Order Modal -->
 <div id="addOrderModal" class="modal-overlay hidden" onclick="handleModalClick(event, 'addOrderModal', closeOrderModal)">
     <div class="modal-box" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between mb-5">
@@ -1421,8 +1960,9 @@
                     <input type="number" id="orderQuantity" required min="1" value="1" class="form-input text-center font-black">
                 </div>
                 <div>
-                    <label class="form-label">المبلغ الإجمالي</label>
-                    <input type="number" id="orderAmount" required class="form-input bg-gray-50 cursor-not-allowed font-black" readonly>
+                    <label class="form-label">المبلغ الإجمالي <span class="text-indigo-500 font-normal text-xs">(قابل للتعديل)</span></label>
+                    <input type="number" id="orderAmount" required class="form-input font-black text-indigo-700" placeholder="0.00" step="0.01">
+                    <p class="text-xs text-gray-400 mt-1">يُحسب تلقائياً أو عدّله يدوياً</p>
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-3">
@@ -1450,7 +1990,6 @@
     </div>
 </div>
 
-<!-- Product Modal -->
 <div id="addProductModal" class="modal-overlay hidden" onclick="handleModalClick(event, 'addProductModal', closeProductModal)">
     <div class="modal-box" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between mb-5">
@@ -1461,6 +2000,22 @@
         </div>
         <form id="productForm" class="space-y-4">
             <input type="hidden" id="editingProductId">
+            <input type="hidden" id="newProdImageBase64">
+            <div>
+                <label class="form-label">صورة المنتج</label>
+                <div id="productImageUploadArea" class="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition relative" onclick="document.getElementById('newProdImageInput').click()">
+                    <img id="productImagePreview" src="" alt="" class="hidden mx-auto mb-2 h-28 w-28 object-cover rounded-xl shadow-md">
+                    <div id="productImagePlaceholder">
+                        <i class="fa-solid fa-image text-3xl text-gray-300 mb-2 block"></i>
+                        <p class="text-sm font-bold text-gray-500">اضغط لرفع صورة المنتج</p>
+                        <p class="text-xs text-gray-400 mt-0.5">PNG, JPG — الحد الأقصى 2MB</p>
+                    </div>
+                    <input type="file" id="newProdImageInput" accept="image/*" class="hidden" onchange="handleProductImageUpload(event)">
+                    <button type="button" id="removeProductImageBtn" onclick="event.stopPropagation(); removeProductImage()" class="hidden absolute top-2 left-2 bg-red-500 text-white w-6 h-6 rounded-full text-xs flex items-center justify-center hover:bg-red-600 transition">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
             <div>
                 <label class="form-label">اسم المنتج *</label>
                 <input type="text" id="newProdName" required class="form-input" placeholder="اسم المنتج">
@@ -1499,7 +2054,6 @@
     </div>
 </div>
 
-<!-- Expense Modal -->
 <div id="addExpenseModal" class="modal-overlay hidden" onclick="handleModalClick(event, 'addExpenseModal', closeExpenseModal)">
     <div class="modal-box" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between mb-5">
@@ -1538,7 +2092,6 @@
     </div>
 </div>
 
-<!-- Customer Details Modal -->
 <div id="customerDetailsModal" class="modal-overlay hidden" onclick="handleModalClick(event, 'customerDetailsModal', closeCustomerModal)">
     <div class="modal-box max-w-2xl p-0 overflow-hidden" onclick="event.stopPropagation()">
         <div class="bg-gradient-to-l from-indigo-700 to-purple-700 p-6 text-white relative overflow-hidden">
@@ -1580,7 +2133,6 @@
     </div>
 </div>
 
-<!-- AI Result Modal -->
 <div id="aiResultModal" class="modal-overlay hidden" onclick="handleModalClick(event, 'aiResultModal', closeAiModal)">
     <div class="modal-box max-w-2xl" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between mb-4">
@@ -1602,7 +2154,6 @@
     </div>
 </div>
 
-<!-- ════════════════ FIREBASE + APP LOGIC ════════════════ -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -1620,7 +2171,6 @@
     let auth, db;
     try { const app = initializeApp(firebaseConfig); auth = getAuth(app); db = getFirestore(app); } catch(e) { console.error(e); }
 
-    // ── State ──
     let orders = [], products = [], expenses = [];
     let chartInstance = null, statusChartInstance = null;
     let currentCurrency = 'JOD', currentUser = null, activeView = 'dashboard';
@@ -1635,7 +2185,6 @@
 
     const MISTRAL_API_KEY = "1cEG4yh8geBMECoEFvUP9351nxKcbnjc";
 
-    // ── Auth ──
     if (auth) {
         onAuthStateChanged(auth, (user) => {
             if (user) { currentUser = user; subscribeToData(user.uid); showDashboard(user); }
@@ -1692,24 +2241,84 @@
         setTimeout(() => t.remove(), 3200);
     };
 
+    let _notifPanelOpen = false;
+    let _prevNotifCount = 0;
+
     function checkLowStock() {
         const low = products.filter(p => p.stock > 0 && p.stock <= lowStockThreshold);
         const out = products.filter(p => p.stock === 0);
-        const bar = document.getElementById('low-stock-bar');
-        const badge = document.getElementById('low-stock-badge');
+        const total = low.length + out.length;
 
-        if (low.length > 0 || out.length > 0) {
-            bar.style.display = 'flex';
-            badge.classList.remove('hidden');
-            let msg = '';
-            if (out.length) msg += `${out.length} منتج نفذ من المخزون! `;
-            if (low.length) msg += `${low.length} منتج مخزونه منخفض.`;
-            document.getElementById('low-stock-text').textContent = '⚠️ ' + msg;
+        const bellBadge = document.getElementById('notif-bell-badge');
+        const bellIcon  = document.getElementById('notif-bell-icon');
+
+        if (total > 0) {
+            // Show badge
+            bellBadge.classList.remove('hidden');
+            bellBadge.textContent = total;
+            // Shake bell if count changed
+            if (total !== _prevNotifCount) {
+                const btn = document.getElementById('notif-bell-btn');
+                btn.classList.remove('bell-shake');
+                void btn.offsetWidth;
+                btn.classList.add('bell-shake');
+                setTimeout(() => btn.classList.remove('bell-shake'), 700);
+            }
+            // Build panel content
+            const body = document.getElementById('notif-panel-body');
+            if (body) {
+                body.innerHTML = [
+                    ...out.map(p => `
+                        <div class="notif-item notif-item-out">
+                            <div class="notif-icon notif-icon-out"><i class="fa-solid fa-circle-xmark"></i></div>
+                            <div>
+                                <div style="font-weight:800;color:#991b1b;font-size:0.82rem;">${p.name}</div>
+                                <div style="font-size:0.75rem;color:#b91c1c;">نفذ من المخزون تماماً</div>
+                            </div>
+                        </div>`),
+                    ...low.map(p => `
+                        <div class="notif-item notif-item-low">
+                            <div class="notif-icon notif-icon-low"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                            <div>
+                                <div style="font-weight:800;color:#92400e;font-size:0.82rem;">${p.name}</div>
+                                <div style="font-size:0.75rem;color:#b45309;">متبقي: ${p.stock} فقط</div>
+                            </div>
+                        </div>`)
+                ].join('');
+            }
         } else {
-            bar.style.display = 'none';
-            badge.classList.add('hidden');
+            bellBadge.classList.add('hidden');
+            // Close panel if open and no notifications
+            if (_notifPanelOpen) closeNotifPanel();
         }
+        _prevNotifCount = total;
+        // Keep hidden badge in old bar for compat
+        const oldBadge = document.getElementById('low-stock-badge');
+        if (oldBadge) oldBadge.classList.toggle('hidden', total === 0);
     }
+
+    window.toggleNotifPanel = () => {
+        const panel = document.getElementById('notif-panel');
+        if (_notifPanelOpen) {
+            closeNotifPanel();
+        } else {
+            // Re-trigger animation
+            const box = panel.querySelector('div');
+            if (box) { box.style.animation = 'none'; void box.offsetWidth; box.style.animation = ''; }
+            panel.classList.remove('hidden');
+            _notifPanelOpen = true;
+        }
+    };
+    window.closeNotifPanel = () => {
+        document.getElementById('notif-panel').classList.add('hidden');
+        _notifPanelOpen = false;
+    };
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+        if (_notifPanelOpen && !e.target.closest('#notif-panel') && !e.target.closest('#notif-bell-btn')) {
+            closeNotifPanel();
+        }
+    });
 
     function hideLoading() {
         const el = document.getElementById('auth-loading');
@@ -1943,11 +2552,19 @@
             const profit = parseFloat(p.price) - parseFloat(p.cost || 0);
             const stockColor = p.stock === 0 ? 'text-red-600 font-black' : p.stock <= lowStockThreshold ? 'text-amber-600 font-black' : 'text-gray-700';
             const stockIcon = p.stock === 0 ? '<i class="fa-solid fa-circle-xmark text-red-500 ml-1"></i>' : p.stock <= lowStockThreshold ? '<i class="fa-solid fa-triangle-exclamation text-amber-500 ml-1"></i>' : '';
+            const imgHtml = p.imageBase64
+                ? `<img src="${p.imageBase64}" alt="${p.name}" class="w-10 h-10 object-cover rounded-lg border border-gray-200 ml-3 flex-shrink-0">`
+                : `<div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center ml-3 flex-shrink-0"><i class="fa-solid fa-box text-indigo-300"></i></div>`;
             return `
             <tr>
                 <td>
-                    <div class="font-bold text-gray-900">${p.name}</div>
-                    <div class="text-xs text-gray-400 mt-0.5">${(p.description || '').substring(0, 45)}${(p.description || '').length > 45 ? '...' : ''}</div>
+                    <div class="flex items-center">
+                        ${imgHtml}
+                        <div>
+                            <div class="font-bold text-gray-900">${p.name}</div>
+                            <div class="text-xs text-gray-400 mt-0.5">${(p.description || '').substring(0, 45)}${(p.description || '').length > 45 ? '...' : ''}</div>
+                        </div>
+                    </div>
                 </td>
                 <td><span class="badge badge-blue">${p.category}</span></td>
                 <td class="font-black text-indigo-700">${formatMoney(parseFloat(p.price))}</td>
@@ -2100,7 +2717,7 @@
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
         const nav = document.getElementById(`nav-${name}`);
         if (nav) nav.classList.add('active');
-        const titles = { dashboard: 'لوحة التحكم', products: 'المنتجات', orders: 'الطلبات', customers: 'العملاء', expenses: 'المصروفات', reports: 'التقارير', settings: 'الإعدادات', developer: 'مطور النظام', privacy: 'سياسة الخصوصية', terms: 'شروط الاستخدام', invoices: 'الفواتير', goals: 'أهداف المبيعات', discounts: 'الخصومات والكوبونات', analytics: 'الإحصائيات المتقدمة', debts: 'الديون والمدفوعات' };
+        const titles = { dashboard: 'لوحة التحكم', products: 'المنتجات', orders: 'الطلبات', customers: 'العملاء', expenses: 'المصروفات', reports: 'التقارير', settings: 'الإعدادات', developer: 'مطور النظام', guide: 'شرح النظام', privacy: 'سياسة الخصوصية', terms: 'شروط الاستخدام', invoices: 'الفواتير', goals: 'أهداف المبيعات', discounts: 'الخصومات والكوبونات', analytics: 'الإحصائيات المتقدمة', debts: 'الديون والمدفوعات' };
         document.getElementById('pageTitle').textContent = titles[name] || name;
         if (window.innerWidth < 768) closeSidebar();
         renderAll();
@@ -2115,20 +2732,45 @@
             products.map(p => `<option value="${p.name}" data-price="${p.price}" data-desc="${p.description || ''}" data-stock="${p.stock}">${p.name} — متوفر: ${p.stock}</option>`).join('');
     }
 
-    function updateOrderCalculations() {
+    let _orderAmountManual = false;
+
+    function updateOrderCalculations(forceUpdate = false) {
         const sel = document.getElementById('productNameSelect');
         const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
         if (!sel.selectedIndex || sel.selectedIndex < 1) return;
         const opt = sel.options[sel.selectedIndex];
         const price = parseFloat(opt.getAttribute('data-price')) || 0;
         const desc = opt.getAttribute('data-desc') || '';
-        document.getElementById('orderAmount').value = price * qty;
+        const stock = parseInt(opt.getAttribute('data-stock')) || 0;
+
+        // Only auto-set amount if user hasn't manually changed it
+        if (!_orderAmountManual || forceUpdate) {
+            document.getElementById('orderAmount').value = (price * qty).toFixed(2);
+        }
+
+        // Show product info card
         const descDiv = document.getElementById('selectedProductDesc');
-        if (desc) { descDiv.textContent = desc; descDiv.classList.remove('hidden'); } else { descDiv.classList.add('hidden'); }
+        descDiv.innerHTML = `
+            <div class="flex items-center justify-between flex-wrap gap-2">
+                <span class="text-indigo-700 font-black">سعر الوحدة: ${price.toLocaleString()} ${currencyRates[currentCurrency]?.symbol || ''}</span>
+                <span class="font-bold ${stock === 0 ? 'text-red-600' : stock <= lowStockThreshold ? 'text-amber-600' : 'text-green-600'}">
+                    <i class="fa-solid fa-warehouse text-xs ml-1"></i>متوفر: ${stock}
+                </span>
+            </div>
+            ${desc ? `<div class="text-gray-500 mt-1 text-xs">${desc.substring(0,80)}${desc.length>80?'...':''}</div>` : ''}`;
+        descDiv.classList.remove('hidden');
     }
 
-    document.getElementById('productNameSelect').addEventListener('change', updateOrderCalculations);
-    document.getElementById('orderQuantity').addEventListener('input', updateOrderCalculations);
+    document.getElementById('productNameSelect').addEventListener('change', () => {
+        _orderAmountManual = false; // reset when product changes
+        updateOrderCalculations(true);
+    });
+    document.getElementById('orderQuantity').addEventListener('input', () => {
+        if (!_orderAmountManual) updateOrderCalculations();
+    });
+    document.getElementById('orderAmount').addEventListener('input', () => {
+        _orderAmountManual = true; // user is manually editing
+    });
 
     // ── CRUD: Orders ──
     window.openOrderModal = (id = null) => {
@@ -2137,6 +2779,7 @@
         document.getElementById('orderForm').reset();
         document.getElementById('editingOrderId').value = '';
         document.getElementById('orderDate').valueAsDate = new Date();
+        _orderAmountManual = false;
         updateProductDropdown();
         if (id && typeof id === 'string') {
             const o = orders.find(x => x.id === id);
@@ -2208,6 +2851,14 @@
         openModal('addProductModal');
         document.getElementById('productForm').reset();
         document.getElementById('editingProductId').value = '';
+        document.getElementById('newProdImageBase64').value = '';
+        // reset image preview
+        const preview = document.getElementById('productImagePreview');
+        const placeholder = document.getElementById('productImagePlaceholder');
+        const removeBtn = document.getElementById('removeProductImageBtn');
+        preview.classList.add('hidden'); preview.src = '';
+        placeholder.classList.remove('hidden');
+        removeBtn.classList.add('hidden');
         if (id) {
             const p = products.find(x => x.id === id);
             if (p) {
@@ -2219,8 +2870,41 @@
                 document.getElementById('newProdPrice').value = p.price;
                 document.getElementById('newProdCost').value = p.cost || 0;
                 document.getElementById('newProdStock').value = p.stock;
+                if (p.imageBase64) {
+                    document.getElementById('newProdImageBase64').value = p.imageBase64;
+                    preview.src = p.imageBase64;
+                    preview.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                    removeBtn.classList.remove('hidden');
+                }
             }
         } else { document.getElementById('productModalTitle').textContent = 'إضافة منتج جديد'; }
+    };
+
+    window.handleProductImageUpload = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+        if (file.size > 2 * 1024 * 1024) { showToast('حجم الصورة يجب أن يكون أقل من 2MB', 'warning'); return; }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const base64 = e.target.result;
+            document.getElementById('newProdImageBase64').value = base64;
+            const preview = document.getElementById('productImagePreview');
+            preview.src = base64;
+            preview.classList.remove('hidden');
+            document.getElementById('productImagePlaceholder').classList.add('hidden');
+            document.getElementById('removeProductImageBtn').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    };
+
+    window.removeProductImage = () => {
+        document.getElementById('newProdImageBase64').value = '';
+        document.getElementById('newProdImageInput').value = '';
+        const preview = document.getElementById('productImagePreview');
+        preview.src = ''; preview.classList.add('hidden');
+        document.getElementById('productImagePlaceholder').classList.remove('hidden');
+        document.getElementById('removeProductImageBtn').classList.add('hidden');
     };
     window.editProduct = (id) => window.openProductModal(id);
     window.closeProductModal = () => closeModal('addProductModal');
@@ -2230,6 +2914,7 @@
         if (!currentUser) return;
         const editId = document.getElementById('editingProductId').value;
         const stock = parseInt(document.getElementById('newProdStock').value);
+        const imageBase64 = document.getElementById('newProdImageBase64').value || '';
         const data = {
             name: document.getElementById('newProdName').value,
             description: document.getElementById('newProdDesc').value,
@@ -2237,6 +2922,7 @@
             price: parseFloat(document.getElementById('newProdPrice').value),
             cost: parseFloat(document.getElementById('newProdCost').value),
             stock, status: stock > 0 ? 'متوفر' : 'نفذت',
+            imageBase64,
             updatedAt: serverTimestamp()
         };
         try {
@@ -3367,9 +4053,7 @@
         showToast(editId ? 'تم التعديل ✅' : 'تم إضافة الدين ✅', 'success');
     });
 
-    // ══════════════════════════════════════════
-    //  ⚡ FEATURE: WHATSAPP INVOICE
-    // ══════════════════════════════════════════
+    
     window.openWhatsappModal = (orderId) => {
         const order = orders.find(o => o.id === orderId);
         if (!order) return;
@@ -3402,9 +4086,7 @@
         closeWhatsappModal();
     };
 
-    // ══════════════════════════════════════════
-    //  ⚡ FEATURE: IMPORT PRODUCTS FROM EXCEL
-    // ══════════════════════════════════════════
+   
     let importedProducts = [];
 
     window.openImportModal = () => {
@@ -3452,7 +4134,6 @@
 
                 if (!importedProducts.length) return showToast('لم يتم العثور على منتجات صالحة', 'warning');
 
-                // Show preview
                 const table = document.getElementById('importPreviewTable');
                 table.innerHTML = `<thead><tr><th>الاسم</th><th>التصنيف</th><th>السعر</th><th>التكلفة</th><th>المخزون</th></tr></thead>
                     <tbody>${importedProducts.slice(0,5).map(p=>`<tr><td class="font-bold">${p.name}</td><td>${p.category}</td><td class="text-indigo-600 font-bold">${p.price}</td><td class="text-gray-500">${p.cost}</td><td>${p.stock}</td></tr>`).join('')}</tbody>`;
@@ -3487,9 +4168,7 @@
         }
     };
 
-    // ══════════════════════════════════════════
-    //  ⚡ ENHANCED NOTIFICATIONS WITH BELL SOUND
-    // ══════════════════════════════════════════
+    
     window.playNotifSound = () => {
         try {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -3504,17 +4183,14 @@
         } catch(e) {}
     };
 
-    // Override showToast to play sound for warnings/errors
     const _origShowToast = window.showToast;
     window.showToast = (msg, type = 'info') => {
         _origShowToast(msg, type);
         if (type === 'warning' || type === 'error') playNotifSound();
     };
 
-    // ── Add WhatsApp button to order rows ──
     const _origRenderOrdersTable = window.renderOrdersTable || null;
     function patchOrderRows() {
-        // Patch getFilteredOrders rendering to add whatsapp button
         const allBodies = [document.getElementById('dashboardOrdersTableBody'), document.getElementById('allOrdersTableBody')];
         allBodies.forEach(tbody => {
             if (!tbody) return;
@@ -3522,13 +4198,11 @@
                 const lastTd = tr.querySelector('td:last-child');
                 if (lastTd && !lastTd.querySelector('.wa-btn')) {
                     const id = tr.dataset.orderId;
-                    // We'll rely on re-render
                 }
             });
         });
     }
 
-    // Extend titles for new views
     const _origSwitchView2 = window.switchView;
     window.switchView = (name) => {
         _origSwitchView2(name);
@@ -3546,7 +4220,6 @@
         document.getElementById('sidebarOverlay').classList.remove('hidden');
     });
 
-    // Init report date
     if (document.getElementById('reportDay')) document.getElementById('reportDay').valueAsDate = new Date();
 
 </script>
