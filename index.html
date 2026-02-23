@@ -879,13 +879,13 @@
                                 <div>
                                     <p class="text-right font-black text-gray-700 mb-3">تواصل مع المطور:</p>
                                     <div class="flex gap-3 justify-center flex-wrap">
-                                        <a href="https://github.com" target="_blank" class="flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-xl font-black text-sm hover:bg-gray-700 transition shadow">
+                                        <a href="https://instagram.com/bh.adr" target="_blank" class="flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-xl font-black text-sm hover:bg-gray-700 transition shadow">
                                             <i class="fa-brands fa-github text-base"></i> GitHub
                                         </a>
-                                        <a href="https://linkedin.com" target="_blank" class="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl font-black text-sm hover:bg-blue-700 transition shadow">
+                                        <a href="https://www.linkedin.com/in/badrfarhan/" target="_blank" class="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl font-black text-sm hover:bg-blue-700 transition shadow">
                                             <i class="fa-brands fa-linkedin text-base"></i> LinkedIn
                                         </a>
-                                        <a href="https://instagram.com" target="_blank" class="flex items-center gap-2 text-white px-5 py-2.5 rounded-xl font-black text-sm hover:opacity-90 transition shadow" style="background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)">
+                                        <a href="https://instagram.com/bh.adr" target="_blank" class="flex items-center gap-2 text-white px-5 py-2.5 rounded-xl font-black text-sm hover:opacity-90 transition shadow" style="background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)">
                                             <i class="fa-brands fa-instagram text-base"></i> Instagram
                                         </a>
                                     </div>
@@ -901,8 +901,8 @@
                                 </div>
                                 <div class="grid grid-cols-3 gap-3 text-center">
                                     <div class="mini-metric"><p class="text-xs text-gray-400 font-semibold mb-1">الإصدار</p><p class="font-black text-indigo-700">v2.0 Pro</p></div>
-                                    <div class="mini-metric"><p class="text-xs text-gray-400 font-semibold mb-1">قاعدة البيانات</p><p class="font-black text-orange-600 text-xs">Firebase</p></div>
-                                    <div class="mini-metric"><p class="text-xs text-gray-400 font-semibold mb-1">الذكاء الاصطناعي</p><p class="font-black text-purple-600 text-xs">Mistral AI</p></div>
+                                   
+                                    
                                 </div>
                             </div>
                             <div class="px-6 pb-5">
@@ -1441,7 +1441,7 @@
                                         <div class="guide-feature-grid">
                                             <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fff7ed;color:#c2410c"><i class="fa-solid fa-fire-flame-curved"></i></div><div><div class="guide-feature-label">Firebase Auth</div><div class="guide-feature-text">تسجيل دخول آمن مع دعم وضع الزائر</div></div></div>
                                             <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#fff7ed;color:#c2410c"><i class="fa-solid fa-cloud"></i></div><div><div class="guide-feature-label">Firestore</div><div class="guide-feature-text">قاعدة بيانات سحابية فورية متزامنة</div></div></div>
-                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#ede9fe;color:#6d28d9"><i class="fa-solid fa-microchip"></i></div><div><div class="guide-feature-label">Mistral AI</div><div class="guide-feature-text">محرك الذكاء الاصطناعي للتحليل والتوصيات</div></div></div>
+                                            <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#ede9fe;color:#6d28d9"><i class="fa-solid fa-microchip"></i></div><div><div class="guide-feature-label">gemini pro</div><div class="guide-feature-text">محرك الذكاء الاصطناعي للتحليل والتوصيات</div></div></div>
                                             <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#dbeafe;color:#1d4ed8"><i class="fa-solid fa-chart-area"></i></div><div><div class="guide-feature-label">Chart.js</div><div class="guide-feature-text">رسوم بيانية تفاعلية احترافية</div></div></div>
                                             <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#dcfce7;color:#15803d"><i class="fa-solid fa-table"></i></div><div><div class="guide-feature-label">SheetJS</div><div class="guide-feature-text">استيراد وتصدير ملفات Excel</div></div></div>
                                             <div class="guide-feature-item"><div class="guide-feature-dot" style="background:#eef2ff;color:#4f46e5"><i class="fa-solid fa-palette"></i></div><div><div class="guide-feature-label">Tailwind CSS</div><div class="guide-feature-text">تصميم متجاوب على جميع الأجهزة</div></div></div>
@@ -1979,9 +1979,35 @@
                     <input type="date" id="orderDate" required class="form-input">
                 </div>
             </div>
+            <!-- Coupon Field -->
+            <div>
+                <label class="form-label">كوبون الخصم <span class="text-gray-400 font-normal text-xs">(اختياري)</span></label>
+                <div class="flex gap-2">
+                    <input type="text" id="orderCouponCode" class="form-input font-black uppercase tracking-widest flex-1" placeholder="أدخل كود الخصم..." style="letter-spacing:2px" oninput="this.value=this.value.toUpperCase()">
+                    <button type="button" onclick="applyCouponToOrder()" class="btn btn-ghost font-black whitespace-nowrap px-4">
+                        <i class="fa-solid fa-tag"></i> تطبيق
+                    </button>
+                </div>
+                <div id="couponResult" class="hidden mt-2 rounded-xl px-4 py-2.5 text-sm font-bold flex items-center gap-2"></div>
+            </div>
             <div>
                 <label class="form-label">ملاحظات إضافية</label>
                 <textarea id="orderDescription" rows="2" class="form-input resize-none" placeholder="أي ملاحظات..."></textarea>
+            </div>
+            <!-- Final amount summary -->
+            <div id="orderFinalSummary" class="hidden bg-indigo-50 border border-indigo-100 rounded-xl p-3">
+                <div class="flex justify-between text-sm mb-1">
+                    <span class="text-gray-500">المبلغ الأصلي:</span>
+                    <span class="font-bold" id="summaryOriginal">0</span>
+                </div>
+                <div class="flex justify-between text-sm mb-1" id="summaryDiscountRow">
+                    <span class="text-red-500">الخصم:</span>
+                    <span class="font-bold text-red-500" id="summaryDiscount">0</span>
+                </div>
+                <div class="flex justify-between font-black text-indigo-800 border-t border-indigo-200 pt-2 mt-1">
+                    <span>المبلغ النهائي:</span>
+                    <span id="summaryFinal">0</span>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary w-full justify-center py-3">
                 <i class="fa-solid fa-floppy-disk"></i> حفظ الطلب
@@ -2780,6 +2806,13 @@
         document.getElementById('editingOrderId').value = '';
         document.getElementById('orderDate').valueAsDate = new Date();
         _orderAmountManual = false;
+        _appliedCoupon = null;
+        const couponInput = document.getElementById('orderCouponCode');
+        if (couponInput) couponInput.value = '';
+        const couponResult = document.getElementById('couponResult');
+        if (couponResult) couponResult.classList.add('hidden');
+        const summaryDiv = document.getElementById('orderFinalSummary');
+        if (summaryDiv) summaryDiv.classList.add('hidden');
         updateProductDropdown();
         if (id && typeof id === 'string') {
             const o = orders.find(x => x.id === id);
@@ -2791,15 +2824,89 @@
                 document.getElementById('customerPhone').value = o.customerPhone || '';
                 document.getElementById('productNameSelect').value = o.product;
                 document.getElementById('orderQuantity').value = o.quantity || 1;
-                document.getElementById('orderAmount').value = o.amount;
+                // Show original amount when editing (before discount)
+                document.getElementById('orderAmount').value = o.originalAmount || o.amount;
                 document.getElementById('orderStatus').value = o.status;
                 document.getElementById('orderDate').value = o.date;
                 document.getElementById('orderDescription').value = o.description || '';
+                // Store original qty for stock diff calculation
+                document.getElementById('editingOrderId').dataset.origQty = o.quantity || 0;
+                document.getElementById('editingOrderId').dataset.origProduct = o.product;
             }
         } else { document.getElementById('orderModalTitle').textContent = 'إضافة طلب جديد'; }
     };
     window.editOrder = (id) => window.openOrderModal(id);
     window.closeOrderModal = () => closeModal('addOrderModal');
+
+    // ── Coupon logic ──
+    let _appliedCoupon = null;
+
+    window.applyCouponToOrder = () => {
+        const code = document.getElementById('orderCouponCode').value.trim().toUpperCase();
+        const resultDiv = document.getElementById('couponResult');
+        const today = new Date().toISOString().split('T')[0];
+
+        if (!code) { showToast('أدخل كود الخصم أولاً', 'warning'); return; }
+
+        const coupon = coupons.find(c => c.code === code);
+
+        if (!coupon) {
+            _appliedCoupon = null;
+            resultDiv.className = 'mt-2 rounded-xl px-4 py-2.5 text-sm font-bold flex items-center gap-2 bg-red-50 border border-red-200 text-red-700';
+            resultDiv.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> الكود غير موجود';
+            resultDiv.classList.remove('hidden');
+            updateOrderSummary();
+            return;
+        }
+        if (!coupon.active) {
+            _appliedCoupon = null;
+            resultDiv.className = 'mt-2 rounded-xl px-4 py-2.5 text-sm font-bold flex items-center gap-2 bg-red-50 border border-red-200 text-red-700';
+            resultDiv.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> هذا الكوبون معطّل';
+            resultDiv.classList.remove('hidden');
+            updateOrderSummary();
+            return;
+        }
+        if (coupon.expiry < today) {
+            _appliedCoupon = null;
+            resultDiv.className = 'mt-2 rounded-xl px-4 py-2.5 text-sm font-bold flex items-center gap-2 bg-red-50 border border-red-200 text-red-700';
+            resultDiv.innerHTML = '<i class="fa-solid fa-calendar-xmark"></i> انتهت صلاحية هذا الكوبون';
+            resultDiv.classList.remove('hidden');
+            updateOrderSummary();
+            return;
+        }
+        if (coupon.maxUses && (coupon.usedCount || 0) >= coupon.maxUses) {
+            _appliedCoupon = null;
+            resultDiv.className = 'mt-2 rounded-xl px-4 py-2.5 text-sm font-bold flex items-center gap-2 bg-red-50 border border-red-200 text-red-700';
+            resultDiv.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> تجاوز الكوبون الحد الأقصى للاستخدام';
+            resultDiv.classList.remove('hidden');
+            updateOrderSummary();
+            return;
+        }
+
+        _appliedCoupon = coupon;
+        const originalAmt = parseFloat(document.getElementById('orderAmount').value) || 0;
+        const discAmt = coupon.type === 'percent' ? (originalAmt * coupon.value / 100) : coupon.value;
+        const label = coupon.type === 'percent' ? `${coupon.value}%` : formatMoney(coupon.value);
+        resultDiv.className = 'mt-2 rounded-xl px-4 py-2.5 text-sm font-bold flex items-center gap-2 bg-green-50 border border-green-200 text-green-700';
+        resultDiv.innerHTML = `<i class="fa-solid fa-circle-check"></i> كوبون مفعّل! خصم ${label} — توفير ${formatMoney(discAmt)}`;
+        resultDiv.classList.remove('hidden');
+        updateOrderSummary();
+    };
+
+    function updateOrderSummary() {
+        const original = parseFloat(document.getElementById('orderAmount').value) || 0;
+        const summaryDiv = document.getElementById('orderFinalSummary');
+        if (!_appliedCoupon) { summaryDiv.classList.add('hidden'); return; }
+        const discAmt = _appliedCoupon.type === 'percent' ? (original * _appliedCoupon.value / 100) : _appliedCoupon.value;
+        const final = Math.max(0, original - discAmt);
+        document.getElementById('summaryOriginal').textContent = formatMoney(original);
+        document.getElementById('summaryDiscount').textContent = '- ' + formatMoney(discAmt);
+        document.getElementById('summaryFinal').textContent = formatMoney(final);
+        summaryDiv.classList.remove('hidden');
+    }
+
+    // Update summary when amount changes
+    document.getElementById('orderAmount').addEventListener('input', updateOrderSummary);
 
     document.getElementById('orderForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -2807,11 +2914,37 @@
         const editId = document.getElementById('editingOrderId').value;
         const prodVal = document.getElementById('productNameSelect').value;
         const qty = parseInt(document.getElementById('orderQuantity').value);
-        const amount = parseFloat(document.getElementById('orderAmount').value);
+        const rawAmount = parseFloat(document.getElementById('orderAmount').value);
         const selectedProd = products.find(p => p.name === prodVal);
         if (!selectedProd) return showToast('المنتج غير موجود', 'error');
-        if (!editId && selectedProd.stock < qty) return showToast(`الكمية غير متوفرة. المتاح: ${selectedProd.stock}`, 'error');
-        const profit = amount - ((selectedProd.cost || 0) * qty);
+
+        // Calculate final amount after coupon
+        let finalAmount = rawAmount;
+        let discountAmount = 0;
+        if (_appliedCoupon) {
+            discountAmount = _appliedCoupon.type === 'percent' ? (rawAmount * _appliedCoupon.value / 100) : _appliedCoupon.value;
+            finalAmount = Math.max(0, rawAmount - discountAmount);
+        }
+
+        // Stock checks
+        const oldOrder = editId ? orders.find(x => x.id === editId) : null;
+        const oldQty = oldOrder ? (oldOrder.quantity || 0) : 0;
+        const oldProduct = oldOrder ? oldOrder.product : null;
+        const qtyDiff = qty - oldQty; // positive = need more stock, negative = returning stock
+
+        if (editId) {
+            // If product changed, handle differently
+            if (oldProduct && oldProduct !== prodVal) {
+                // Return old product stock, check new product stock
+                if (selectedProd.stock < qty) return showToast(`الكمية غير متوفرة في ${prodVal}. المتاح: ${selectedProd.stock}`, 'error');
+            } else if (qtyDiff > 0 && selectedProd.stock < qtyDiff) {
+                return showToast(`الكمية غير متوفرة. يمكن إضافة ${selectedProd.stock} فقط إضافياً`, 'error');
+            }
+        } else {
+            if (selectedProd.stock < qty) return showToast(`الكمية غير متوفرة. المتاح: ${selectedProd.stock}`, 'error');
+        }
+
+        const profit = finalAmount - ((selectedProd.cost || 0) * qty);
         const data = {
             customer: document.getElementById('customerName').value,
             customerEmail: document.getElementById('customerEmail').value,
@@ -2819,20 +2952,55 @@
             product: prodVal,
             quantity: qty,
             snapshotDescription: selectedProd.description || '',
-            amount, profit,
+            amount: finalAmount,
+            originalAmount: rawAmount,
+            discountAmount: discountAmount,
+            couponCode: _appliedCoupon ? _appliedCoupon.code : '',
+            profit,
             status: document.getElementById('orderStatus').value,
             date: document.getElementById('orderDate').value,
             description: document.getElementById('orderDescription').value,
             updatedAt: serverTimestamp()
         };
+
         try {
-            if (editId) await updateDoc(doc(db, `users/${currentUser.uid}/orders`, editId), data);
-            else {
+            if (editId) {
+                await updateDoc(doc(db, `users/${currentUser.uid}/orders`, editId), data);
+                // Adjust stock
+                if (oldProduct && oldProduct !== prodVal) {
+                    // Product changed: return old product stock
+                    const oldProd = products.find(p => p.name === oldProduct);
+                    if (oldProd) {
+                        const restoredStock = oldProd.stock + oldQty;
+                        await updateDoc(doc(db, `users/${currentUser.uid}/products`, oldProd.id), {
+                            stock: restoredStock, status: restoredStock > 0 ? 'متوفر' : 'نفذت'
+                        });
+                    }
+                    // Deduct from new product
+                    const newStock = selectedProd.stock - qty;
+                    await updateDoc(doc(db, `users/${currentUser.uid}/products`, selectedProd.id), {
+                        stock: newStock, status: newStock > 0 ? 'متوفر' : 'نفذت'
+                    });
+                } else if (qtyDiff !== 0) {
+                    // Same product, just adjust difference
+                    const newStock = selectedProd.stock - qtyDiff;
+                    await updateDoc(doc(db, `users/${currentUser.uid}/products`, selectedProd.id), {
+                        stock: newStock, status: newStock > 0 ? 'متوفر' : 'نفذت'
+                    });
+                }
+            } else {
                 data.createdAt = serverTimestamp();
                 await addDoc(collection(db, `users/${currentUser.uid}/orders`), data);
                 const newStock = selectedProd.stock - qty;
                 await updateDoc(doc(db, `users/${currentUser.uid}/products`, selectedProd.id), { stock: newStock, status: newStock > 0 ? 'متوفر' : 'نفذت' });
+                // Mark coupon as used
+                if (_appliedCoupon) {
+                    coupons = coupons.map(c => c.id === _appliedCoupon.id ? { ...c, usedCount: (c.usedCount || 0) + 1 } : c);
+                    saveCoupons();
+                    renderCoupons();
+                }
             }
+            _appliedCoupon = null;
             closeOrderModal();
             showToast(editId ? 'تم تعديل الطلب ✅' : 'تم إضافة الطلب ✅', 'success');
             switchView('dashboard');
